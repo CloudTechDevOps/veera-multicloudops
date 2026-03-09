@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DevOps Class Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0e17;
+      --surface: #111827;
+      --border: #1f2d44;
+      --accent1: #00d9ff;
+      --accent2: #f97316;
+      --accent3: #a855f7;
+      --text: #e2e8f0;
+      --muted: #64748b;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,217,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,217,255,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Glow orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb1 { width: 500px; height: 500px; background: rgba(0,217,255,0.08); top: -150px; left: -100px; }
+    .orb2 { width: 400px; height: 400px; background: rgba(168,85,247,0.07); bottom: -100px; right: -100px; }
+
+    .back-btn {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 2;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text);
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: rgba(17,24,39,0.85);
+      border: 1px solid var(--border);
+      transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    }
+    .back-btn:hover {
+      border-color: rgba(0,217,255,0.45);
+      background: rgba(0,217,255,0.08);
+      transform: translateY(-1px);
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: relative;
+      z-index: 1;
+      padding: 60px 40px 20px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent1);
+      border: 1px solid rgba(0,217,255,0.3);
+      padding: 5px 14px;
+      border-radius: 2px;
+      margin-bottom: 28px;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      animation: fadeDown 0.7s ease 0.1s both;
+      color: springgreen;
+    }
+
+    h1 span.glow {
+      color: var(--accent1);
+      text-shadow: 0 0 40px rgba(207, 13, 217, 0.5);
+    }
+
+    .subtitle {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      animation: fadeDown 0.7s ease 0.2s both;
+    }
+
+    /* ── TERMINAL LINE ── */
+    .terminal-line {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 40px auto 0;
+      max-width: 520px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: fadeDown 0.7s ease 0.3s both;
+    }
+
+    .terminal-line .prompt { color: var(--accent1); }
+    .terminal-line .cmd { color: var(--text); }
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: var(--accent1);
+      animation: blink 1.1s step-end infinite;
+      border-radius: 1px;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── CARDS ── */
+    .cards-section {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 60px auto 0;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px 32px 32px;
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeUp 0.7s ease both;
+    }
+    .card:nth-child(1) { animation-delay: 0.35s; }
+    .card:nth-child(2) { animation-delay: 0.5s; }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      border-radius: inherit;
+    }
+    .card.devops::before { background: radial-gradient(ellipse at top left, rgba(0,217,255,0.08), transparent 70%); }
+    .card.aws::before    { background: radial-gradient(ellipse at top left, rgba(249,115,22,0.08), transparent 70%); }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .card.devops:hover { border-color: rgba(0,217,255,0.5); box-shadow: 0 20px 60px rgba(0,217,255,0.12); }
+    .card.aws:hover    { border-color: rgba(249,115,22,0.5);  box-shadow: 0 20px 60px rgba(249,115,22,0.12); }
+    .card:hover::before { opacity: 1; }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 22px;
+    }
+    .card.devops .card-icon { background: rgba(0,217,255,0.1); border: 1px solid rgba(0,217,255,0.2); }
+    .card.aws    .card-icon { background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.2); }
+
+    .card-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .card.devops .card-label { color: var(--accent1); }
+    .card.aws    .card-label { color: var(--accent2); }
+
+    .card h2 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.65;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .topics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 22px;
+    }
+
+    .topic-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+    .card.devops .topic-tag { background: rgba(0,217,255,0.07); color: var(--accent1); border: 1px solid rgba(0,217,255,0.15); }
+    .card.aws    .topic-tag { background: rgba(249,115,22,0.07);  color: var(--accent2); border: 1px solid rgba(249,115,22,0.15); }
+
+    .card-arrow {
+      position: absolute;
+      top: 32px;
+      right: 32px;
+      font-size: 18px;
+      opacity: 0.3;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .card:hover .card-arrow { opacity: 1; transform: translate(3px, -3px); }
+
+    /* ── STATS ROW ── */
+    .stats {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 40px auto 0;
+      padding: 0 24px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.7s ease 0.6s both;
+    }
+
+    .stat-box {
+      flex: 1;
+      min-width: 140px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent1);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--muted);
+      margin-top: 4px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 60px 24px 40px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    footer span { color: var(--accent3); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="../index.html" class="back-btn">&larr; Back</a>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <header>
+    <div class="badge">// Class Notes Hub</div>
+    <h1>MultiCloud &amp; <span class="glow">Devops</span><br>Notes by Veera Sir </h1>
+    <p class="subtitle">Your complete guide to modern MultiCloud devops &amp; AI</p>
+
+    <div class="terminal-line">
+      <span class="prompt">$</span>
+      <span class="cmd">select your module and start learning</span>
+      <span class="cursor"></span>
+    </div>
+  </header>
+
+  <section class="cards-section">
+
+    <a href="devops.html" class="card devops">
+      <span class="card-arrow">↗</span>
+      <div class="card-icon">⚙️</div>
+      <div class="card-label">Module 01</div>
+      <h2>DevOps Notes</h2>
+      <p>CI/CD pipelines, containerization, automation, version control workflows, and modern DevOps practices.</p>
+      <div class="topics">
+        <span class="topic-tag">Docker</span>
+        <span class="topic-tag">Kubernetes</span>
+        <span class="topic-tag">Jenkins</span>
+        <span class="topic-tag">Git</span>
+        <span class="topic-tag">Linux</span>
+        <span class="topic-tag">Terraform</span>
+      </div>
+    </a>
+
+    <a href="aws.html" class="card aws">
+      <span class="card-arrow">↗</span>
+      <div class="card-icon">☁️</div>
+      <div class="card-label">Module 02</div>
+      <h2>AWS Notes</h2>
+      <p>Amazon Web Services — compute, storage, networking, IAM, serverless, and cloud architecture patterns.</p>
+      <div class="topics">
+        <span class="topic-tag">EC2</span>
+        <span class="topic-tag">S3</span>
+        <span class="topic-tag">Lambda</span>
+        <span class="topic-tag">VPC</span>
+        <span class="topic-tag">IAM</span>
+        <span class="topic-tag">RDS</span>
+      </div>
+    </a>
+
+  </section>
+
+  <div class="stats">
+    <div class="stat-box">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Modules</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Practice</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Hands-on</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">Access</div>
+    </div>
+  </div>
+
+  <footer>
+    Built with <span>♥</span> for DevOps learners &nbsp;·&nbsp; Select a module above to begin
+  </footer>
+
+</body>
+</html>

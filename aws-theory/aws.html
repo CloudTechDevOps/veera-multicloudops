@@ -1,0 +1,2310 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AWS Notes — All Topics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Syne:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #FF9900;
+      --dark: #0D1117;
+      --mid: #131921;
+      --card: #161C25;
+      --border: rgba(255,153,0,0.15);
+      --text: #C8D6E5;
+      --muted: #677788;
+      --blue: #1A6EBE;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Syne', sans-serif; background: var(--dark); color: var(--text); line-height: 1.75; }
+    .back-btn {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 200;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.78rem;
+      color: var(--text);
+      background: rgba(13,17,23,0.95);
+      border: 1px solid var(--border);
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .back-btn:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+      transform: translateY(-1px);
+    }
+
+    /* ===== TOP NAV ===== */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,17,23,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 60px;
+    }
+    .nav-brand {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem; font-weight: 900;
+      color: var(--orange); letter-spacing: 2px;
+      text-decoration: none;
+    }
+    .nav-home {
+      font-size: 0.82rem; color: var(--muted);
+      text-decoration: none; letter-spacing: 1px;
+      transition: color 0.2s;
+    }
+    .nav-home:hover { color: var(--orange); }
+
+    /* ===== SIDEBAR ===== */
+    .layout { display: flex; min-height: calc(100vh - 60px); }
+
+    aside {
+      width: 240px; min-width: 240px;
+      background: var(--mid);
+      border-right: 1px solid rgba(255,255,255,0.05);
+      position: sticky; top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+      padding: 24px 0;
+    }
+    aside::-webkit-scrollbar { width: 3px; }
+    aside::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .sidebar-section { margin-bottom: 8px; }
+    .sidebar-category {
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 2px; color: var(--orange);
+      text-transform: uppercase;
+      padding: 8px 20px 4px;
+    }
+    aside a {
+      display: block; padding: 7px 20px;
+      font-size: 0.82rem; color: var(--muted);
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+      border-left: 2px solid transparent;
+    }
+    aside a:hover {
+      color: var(--text);
+      background: rgba(255,153,0,0.06);
+      border-left-color: var(--orange);
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main { flex: 1; overflow: hidden; }
+
+    .page-header {
+      background: linear-gradient(160deg, #131921 0%, #0D1117 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 60px 40px;
+      position: relative; overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute; top: -50%; right: -10%;
+      width: 500px; height: 500px;
+      background: radial-gradient(ellipse, rgba(255,153,0,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .page-header h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #e8c503 0%, #17c044 35%, #ca041b 60%, #cb09b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative; z-index: 1;
+    }
+    .page-header h1 span { color: var(--orange); }
+    .page-header p {
+      color: var(--muted); margin-top: 12px;
+      font-size: 1rem; position: relative; z-index: 1;
+    }
+
+    .content { padding: 0 60px 80px; }
+
+    /* ===== TOPIC SECTION ===== */
+    .topic-section {
+      margin-top: 60px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--card);
+    }
+
+    .topic-header {
+      background: linear-gradient(135deg, rgba(255,153,0,0.1) 0%, rgba(255,153,0,0.02) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 36px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .topic-icon-lg { font-size: 2.5rem; flex-shrink: 0; }
+    .topic-header-text h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.3rem; font-weight: 900;
+      color: #fff; letter-spacing: 1px;
+    }
+    .topic-header-text .tag {
+      display: inline-block;
+      background: rgba(255,153,0,0.15);
+      color: var(--orange);
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 3px;
+      margin-top: 6px;
+    }
+
+    .topic-body { padding: 36px; }
+
+    /* sub headings */
+    .topic-body h3 {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.9rem; font-weight: 700;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #ffd27a 0%, #ff9900 35%, #ff5e8a 65%, #1A6EBE 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+      margin: 28px 0 12px;
+      padding-left: 12px;
+      border-left: 3px solid var(--orange);
+    }
+    .topic-body h3:first-child { margin-top: 0; }
+
+    .topic-body p { margin-bottom: 14px; color: var(--text); font-size: 0.95rem; }
+
+    .topic-body ul, .topic-body ol {
+      padding-left: 24px; margin-bottom: 16px;
+    }
+    .topic-body li {
+      margin-bottom: 6px; font-size: 0.92rem; color: var(--text);
+    }
+    .topic-body li strong { color: #fff; }
+
+    /* info boxes */
+    .info-box {
+      background: rgba(26,110,190,0.08);
+      border: 1px solid rgba(26,110,190,0.3);
+      border-left: 4px solid var(--blue);
+      border-radius: 8px; padding: 16px 20px;
+      margin: 16px 0; font-size: 0.9rem;
+    }
+    .tip-box {
+      background: rgba(255,153,0,0.06);
+      border: 1px solid rgba(255,153,0,0.25);
+      border-left: 4px solid var(--orange);
+      border-radius: 8px; padding: 16px 20px;
+      margin: 16px 0; font-size: 0.9rem;
+    }
+    .tip-box strong, .info-box strong { color: var(--orange); }
+
+    /* tables */
+    .table-wrap { overflow-x: auto; margin: 20px 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th {
+      background: rgba(255,153,0,0.12);
+      color: var(--orange); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      padding: 10px 14px; text-align: left;
+      border-bottom: 2px solid rgba(255,153,0,0.3);
+    }
+    td { padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    tr:hover td { background: rgba(255,255,255,0.025); }
+
+    /* diagram placeholder boxes */
+    .diagram-box {
+      border: 1px dashed rgba(255,153,0,0.3);
+      border-radius: 12px;
+      background: rgba(255,153,0,0.03);
+      padding: 32px 20px;
+      text-align: center;
+      margin: 24px 0;
+    }
+    .diagram-box .diagram-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.75rem; color: var(--orange);
+      letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .diagram-box p { font-size: 0.85rem; color: var(--muted); margin: 0; }
+
+    /* AWS architecture SVG diagrams */
+    .arch-diagram { width: 100%; max-width: 680px; margin: 0 auto; display: block; }
+
+    /* code blocks */
+    pre {
+      background: #0A0E14;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 20px 22px;
+      overflow-x: auto;
+      margin: 16px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #a8d8a8;
+      line-height: 1.6;
+    }
+
+    /* pricing badge */
+    .pricing-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,153,0,0.1);
+      border: 1px solid rgba(255,153,0,0.3);
+      border-radius: 8px; padding: 12px 18px;
+      margin: 8px 8px 8px 0;
+      font-size: 0.88rem;
+    }
+    .pricing-badge .badge-icon { font-size: 1.2rem; }
+    .pricing-badge .badge-text { color: var(--text); }
+    .pricing-badge .badge-text strong { color: var(--orange); display: block; font-size: 0.8rem; }
+
+    /* comparison grid */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px; margin: 16px 0;
+    }
+    .compare-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px; padding: 20px;
+    }
+    .compare-card h4 {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem; color: var(--orange);
+      margin-bottom: 12px; letter-spacing: 1px;
+    }
+    .compare-card ul { padding-left: 18px; }
+    .compare-card li { font-size: 0.88rem; margin-bottom: 5px; color: var(--text); }
+
+    @media (max-width: 900px) {
+      aside { display: none; }
+      .page-header, .content { padding-left: 24px; padding-right: 24px; }
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<a class="back-btn" href="../index.html">← Back</a>
+
+<nav>
+  <a href="index.html" class="nav-brand">☁ AWS HUB</a>
+  <a href="index.html" class="nav-home">← Back to Home</a>
+</nav>
+
+<div class="layout">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside>
+    <div class="sidebar-section">
+      <div class="sidebar-category">Compute</div>
+      <a href="#ec2">EC2</a>
+      <a href="#beanstalk">Elastic Beanstalk</a>
+      <a href="#lambda">Lambda</a>
+      <a href="#fargate">Fargate</a>
+      <a href="#eks">Amazon EKS</a>
+      <a href="#ecs">Amazon ECS</a>
+      <a href="#ecr">Amazon ECR</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-category">Storage</div>
+      <a href="#s3">Amazon S3</a>
+      <a href="#backup">AWS Backup</a>
+      <a href="#ebs">EBS</a>
+      <a href="#efs">EFS</a>
+      <a href="#glacier">S3 Glacier</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-category">Databases</div>
+      <a href="#aurora">Aurora</a>
+      <a href="#documentdb">DocumentDB</a>
+      <a href="#dynamodb">DynamoDB</a>
+      <a href="#elasticache">ElastiCache</a>
+      <a href="#rds">Amazon RDS</a>
+      <a href="#redshift">Redshift</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-category">Security</div>
+      <a href="#iam">IAM</a>
+      <a href="#cognito">Cognito</a>
+      <a href="#secrets">Secrets Manager</a>
+      <a href="#securityhub">Security Hub</a>
+      <a href="#kms">KMS</a>
+      <a href="#acm">ACM</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-category">Management</div>
+      <a href="#autoscaling">Auto Scaling</a>
+      <a href="#cloudformation">CloudFormation</a>
+      <a href="#cloudtrail">CloudTrail</a>
+      <a href="#cloudwatch">CloudWatch</a>
+      <a href="#config">AWS Config</a>
+      <a href="#organizations">Organizations</a>
+      <a href="#systemsmanager">Systems Manager</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-category">Developer</div>
+      <a href="#codebuild">CodeBuild</a>
+      <a href="#codecommit">CodeCommit</a>
+      <a href="#codedeploy">CodeDeploy</a>
+      <a href="#dms">DMS</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-category">Networking</div>
+      <a href="#apigateway">API Gateway</a>
+      <a href="#cloudfront">CloudFront</a>
+      <a href="#transitgateway">Transit Gateway</a>
+      <a href="#directconnect">Direct Connect</a>
+      <a href="#elb">Elastic Load Balancer</a>
+      <a href="#route53">Route 53</a>
+      <a href="#vpc">AWS VPC</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-category">Integration</div>
+      <a href="#eventbridge">EventBridge</a>
+      <a href="#sns">SNS</a>
+      <a href="#sqs">SQS</a>
+      <a href="#stepfunctions">Step Functions</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-category">Cost Management</div>
+      <a href="#costexplorer">Cost Explorer</a>
+      <a href="#budgets">AWS Budgets</a>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main>
+    <div class="page-header">
+      <h1>AWS <span>Complete Notes by veera sir</span></h1>
+      <p>35+ services covered — Compute, Storage, Databases, Security, Networking, DevOps & more</p>
+    </div>
+
+    <div class="content">
+
+<!-- ===================== EC2 ===================== -->
+<div class="topic-section" id="ec2">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🖥️</div>
+    <div class="topic-header-text">
+      <h2>AWS EC2 — Elastic Compute Cloud</h2>
+      <span class="tag">Compute</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is EC2?</h3>
+    <p>EC2 stands for <strong>Elastic Compute Cloud</strong>. It is the virtual machine in the Cloud Environment. EC2 provides scalable capacity — instances can scale up and down automatically based on traffic. You do not need to invest in hardware. You can launch as many servers as you want with complete control over security, networking, and storage.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-title">EC2 Architecture Overview</div>
+      <svg class="arch-diagram" viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="20" width="600" height="180" rx="12" fill="none" stroke="#FF990030" stroke-width="1.5"/>
+        <text x="310" y="45" fill="#FF9900" font-size="11" font-family="monospace" text-anchor="middle" letter-spacing="2">AWS REGION / AVAILABILITY ZONE</text>
+        <rect x="50" y="60" width="120" height="80" rx="8" fill="#1A2530" stroke="#FF990040"/>
+        <text x="110" y="95" fill="#FF9900" font-size="10" font-family="monospace" text-anchor="middle">EC2 Instance</text>
+        <text x="110" y="112" fill="#8899aa" font-size="9" font-family="sans-serif" text-anchor="middle">t3.medium</text>
+        <text x="110" y="127" fill="#8899aa" font-size="9" font-family="sans-serif" text-anchor="middle">AMI | Key Pair</text>
+        <rect x="200" y="60" width="120" height="80" rx="8" fill="#1A2530" stroke="#FF990040"/>
+        <text x="260" y="95" fill="#FF9900" font-size="10" font-family="monospace" text-anchor="middle">EBS Volume</text>
+        <text x="260" y="112" fill="#8899aa" font-size="9" font-family="sans-serif" text-anchor="middle">gp2 | io1 | st1</text>
+        <text x="260" y="127" fill="#8899aa" font-size="9" font-family="sans-serif" text-anchor="middle">Persistent Storage</text>
+        <rect x="350" y="60" width="120" height="80" rx="8" fill="#1A2530" stroke="#FF990040"/>
+        <text x="410" y="95" fill="#FF9900" font-size="10" font-family="monospace" text-anchor="middle">Security Group</text>
+        <text x="410" y="112" fill="#8899aa" font-size="9" font-family="sans-serif" text-anchor="middle">Inbound / Outbound</text>
+        <text x="410" y="127" fill="#8899aa" font-size="9" font-family="sans-serif" text-anchor="middle">Virtual Firewall</text>
+        <rect x="500" y="60" width="100" height="80" rx="8" fill="#1A2530" stroke="#FF990040"/>
+        <text x="550" y="95" fill="#FF9900" font-size="10" font-family="monospace" text-anchor="middle">AMI</text>
+        <text x="550" y="112" fill="#8899aa" font-size="9" font-family="sans-serif" text-anchor="middle">OS + Config</text>
+        <text x="550" y="127" fill="#8899aa" font-size="9" font-family="sans-serif" text-anchor="middle">Image Template</text>
+        <line x1="170" y1="100" x2="200" y2="100" stroke="#FF990060" stroke-width="1.5"/>
+        <line x1="320" y1="100" x2="350" y2="100" stroke="#FF990060" stroke-width="1.5"/>
+        <line x1="470" y1="100" x2="500" y2="100" stroke="#FF990060" stroke-width="1.5"/>
+      </svg>
+    </div>
+
+    <h3>Instance Types</h3>
+    <p>Instance types provide a range of CPU, memory, storage, and networking for various use cases.</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Family</th><th>Purpose</th><th>Examples</th></tr>
+        <tr><td>General Purpose</td><td>Balanced CPU, memory, network</td><td>t3, m5, m6g</td></tr>
+        <tr><td>Compute Optimized</td><td>High-performance processors</td><td>c5, c6g</td></tr>
+        <tr><td>Memory Optimized</td><td>Large in-memory datasets</td><td>r5, x1e, z1d</td></tr>
+        <tr><td>Storage Optimized</td><td>High sequential read/write</td><td>i3, d2, h1</td></tr>
+        <tr><td>Accelerated Computing</td><td>GPU / FPGA workloads</td><td>p3, g4, f1</td></tr>
+      </table>
+    </div>
+
+    <h3>EBS Volume Types</h3>
+    <ul>
+      <li><strong>General Purpose SSD (gp2/gp3)</strong> — boot volumes, dev/test, low-latency apps</li>
+      <li><strong>Provisioned IOPS SSD (io1/io2)</strong> — databases needing 16,000+ IOPS</li>
+      <li><strong>Throughput Optimized HDD (st1)</strong> — big data, data warehouses, streaming</li>
+      <li><strong>Cold HDD (sc1)</strong> — infrequently accessed, lowest cost</li>
+      <li><strong>Magnetic</strong> — legacy workloads</li>
+    </ul>
+
+    <h3>AMI — Amazon Machine Image</h3>
+    <p>An AMI decides the OS, installs dependencies, libraries, and data of your EC2 instances. Multiple instances with the same configuration can be launched using a single AMI.</p>
+
+    <h3>Security Groups</h3>
+    <ul>
+      <li>Acts as a virtual firewall for EC2 instances.</li>
+      <li>Decides the type of port and traffic to allow.</li>
+      <li>Security groups operate at the <strong>instance level</strong>; Network ACLs operate at the <strong>subnet level</strong>.</li>
+      <li>Security Groups can only <strong>allow</strong> traffic — they cannot deny it explicitly.</li>
+      <li>Security Groups are <strong>stateful</strong> — return traffic is automatically allowed.</li>
+      <li>By default, all outbound traffic is allowed; inbound rules must be explicitly defined.</li>
+    </ul>
+
+    <h3>Key Pair</h3>
+    <p>A key pair consists of a <strong>public key</strong> (attached to EC2 instance) and a <strong>private key</strong> (held by you). Access is only granted if both keys match. Keep the private key in a secure place.</p>
+
+    <h3>Pricing Models</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Model</th><th>Best For</th></tr>
+        <tr><td>On-Demand</td><td>Unpredictable workloads, testing</td></tr>
+        <tr><td>Reserved Instances</td><td>Predictable, steady-state workloads (1 or 3 year)</td></tr>
+        <tr><td>Savings Plans</td><td>Flexible savings across compute services</td></tr>
+        <tr><td>Spot Instances</td><td>Fault-tolerant, flexible workloads — up to 90% discount</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== BEANSTALK ===================== -->
+<div class="topic-section" id="beanstalk">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🫛</div>
+    <div class="topic-header-text">
+      <h2>AWS Elastic Beanstalk</h2>
+      <span class="tag">Compute · PaaS</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Elastic Beanstalk?</h3>
+    <p>Beanstalk is a compute service for deploying and scaling applications in many popular languages. Developers focus on writing code — AWS handles infrastructure. It provides a dashboard to monitor applications and flexibility to choose AWS resources and pricing options.</p>
+
+    <h3>Environment Types</h3>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>🌐 Web Tier</h4>
+        <ul>
+          <li>Handles HTTP/HTTPS requests from users</li>
+          <li>Route 53 → ELB → Auto Scaling EC2</li>
+          <li>Host Manager on each EC2 instance (logging, monitoring, events)</li>
+          <li>ELB distributes traffic across instances</li>
+        </ul>
+      </div>
+      <div class="compare-card">
+        <h4>⚙️ Worker Tier</h4>
+        <ul>
+          <li>Background processing for heavy tasks</li>
+          <li>DB clean-up, report generation</li>
+          <li>Daemon installed on each EC2 in Auto Scaling Group</li>
+          <li>Pulls requests from SQS queue, executes, then SQS deletes message</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Supported Platforms</h3>
+    <p>.Net (Linux/Windows), Docker, GlassFish, Go, Java, Node.js, Python, Ruby, Tomcat</p>
+
+    <h3>Deployment Models</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Model</th><th>Behavior</th><th>Downtime?</th></tr>
+        <tr><td>All at Once</td><td>Deploy to all instances simultaneously</td><td>Yes — full downtime</td></tr>
+        <tr><td>Rolling</td><td>Deploy in batches; some run old version</td><td>Partial</td></tr>
+        <tr><td>Rolling with additional batch</td><td>Provision extra instances first, then deploy in batches</td><td>Minimal</td></tr>
+        <tr><td>Immutable</td><td>Deploy to separate new instances</td><td>No</td></tr>
+        <tr><td>Traffic Splitting</td><td>Split traffic between old and new instances</td><td>No</td></tr>
+      </table>
+    </div>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> Beanstalk itself is free. You pay for the underlying resources (EC2, ELB, Auto Scaling Group).</div>
+  </div>
+</div>
+
+<!-- ===================== LAMBDA ===================== -->
+<div class="topic-section" id="lambda">
+  <div class="topic-header">
+    <div class="topic-icon-lg">⚡</div>
+    <div class="topic-header-text">
+      <h2>AWS Lambda</h2>
+      <span class="tag">Serverless · Compute</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is AWS Lambda?</h3>
+    <p>Lambda is a <strong>serverless</strong> compute service that runs code without provisioning servers. It only runs when needed, scales automatically, and follows a <strong>pay-per-use</strong> model — no charge when code is not running.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-title">Lambda Invocation Flow</div>
+      <svg class="arch-diagram" viewBox="0 0 640 130" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="35" width="110" height="55" rx="8" fill="#1A2530" stroke="#FF990040"/>
+        <text x="75" y="60" fill="#FF9900" font-size="9" font-family="monospace" text-anchor="middle">EVENT SOURCE</text>
+        <text x="75" y="76" fill="#8899aa" font-size="8" text-anchor="middle">S3 / API GW / DynamoDB</text>
+        <text x="75" y="88" fill="#8899aa" font-size="8" text-anchor="middle">SQS / SNS / CloudWatch</text>
+        <polygon points="145,62 160,55 160,69" fill="#FF990080"/>
+        <rect x="165" y="35" width="110" height="55" rx="8" fill="#1A2530" stroke="#FF990040"/>
+        <text x="220" y="60" fill="#FF9900" font-size="9" font-family="monospace" text-anchor="middle">LAMBDA</text>
+        <text x="220" y="76" fill="#8899aa" font-size="8" text-anchor="middle">FUNCTION</text>
+        <text x="220" y="88" fill="#8899aa" font-size="8" text-anchor="middle">Node/Python/Java/Go</text>
+        <polygon points="290,62 305,55 305,69" fill="#FF990080"/>
+        <rect x="310" y="35" width="110" height="55" rx="8" fill="#1A2530" stroke="#FF990040"/>
+        <text x="365" y="60" fill="#FF9900" font-size="9" font-family="monospace" text-anchor="middle">EXECUTION</text>
+        <text x="365" y="76" fill="#8899aa" font-size="8" text-anchor="middle">Run code in managed</text>
+        <text x="365" y="88" fill="#8899aa" font-size="8" text-anchor="middle">container environment</text>
+        <polygon points="435,62 450,55 450,69" fill="#FF990080"/>
+        <rect x="455" y="35" width="110" height="55" rx="8" fill="#1A2530" stroke="#FF990040"/>
+        <text x="510" y="60" fill="#FF9900" font-size="9" font-family="monospace" text-anchor="middle">CLOUDWATCH</text>
+        <text x="510" y="76" fill="#8899aa" font-size="8" text-anchor="middle">Metrics, Logs</text>
+        <text x="510" y="88" fill="#8899aa" font-size="8" text-anchor="middle">Auto-monitoring</text>
+      </svg>
+    </div>
+
+    <h3>Lambda Functions</h3>
+    <ul>
+      <li>A function is a block of code in Lambda — upload as zip or from S3.</li>
+      <li>Lambda automatically monitors functions and reports metrics via CloudWatch.</li>
+    </ul>
+
+    <h3>Lambda Layers</h3>
+    <ul>
+      <li>A layer is a container/archive with additional code (libraries, dependencies, custom runtimes).</li>
+      <li>Up to <strong>5 layers</strong> per function. Layers are immutable — new version on publish.</li>
+      <li>Layers are private by default but can be shared or made public.</li>
+    </ul>
+
+    <h3>Supported Event Sources</h3>
+    <p>DynamoDB, SQS, SNS, CloudWatch Events, API Gateway, AWS IoT, Kinesis, CloudWatch Logs</p>
+
+    <h3>Supported Languages</h3>
+    <p>Node.js, Go, Java, Python, Ruby, .NET</p>
+
+    <h3>Lambda@Edge</h3>
+    <p>Feature of CloudFront that runs code closer to users, improving performance and reducing latency. No infrastructure management needed globally — runs in response to CDN events.</p>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> Based on number of requests + duration (per 100ms). Free tier: 1M requests/month + 400,000 GB-seconds of compute.</div>
+  </div>
+</div>
+
+<!-- ===================== FARGATE ===================== -->
+<div class="topic-section" id="fargate">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🐳</div>
+    <div class="topic-header-text">
+      <h2>AWS Fargate</h2>
+      <span class="tag">Serverless · Containers</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is AWS Fargate?</h3>
+    <p>Fargate is a serverless compute service for containers used by <strong>Amazon ECS</strong> and <strong>Amazon EKS</strong>. It eliminates the need to provision, configure, or scale EC2 instances for containers. Each Fargate task does <em>not</em> share its kernel, memory, CPU, or ENI with other tasks.</p>
+
+    <h3>Storage Support</h3>
+    <ul>
+      <li><strong>Amazon EFS volumes</strong> — for persistent storage</li>
+      <li><strong>Ephemeral storage</strong> — for non-persistent storage</li>
+    </ul>
+
+    <h3>Benefits</h3>
+    <ul>
+      <li>Focus on building applications, not managing servers</li>
+      <li>Automatically scales compute matching container resource requirements</li>
+      <li>Built-in integration with CloudWatch Container Insights</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> Charged for vCPU and memory consumed. Savings Plans offer up to 50% savings with 1 or 3 year commitment.</div>
+  </div>
+</div>
+
+<!-- ===================== EKS ===================== -->
+<div class="topic-section" id="eks">
+  <div class="topic-header">
+    <div class="topic-icon-lg">☸️</div>
+    <div class="topic-header-text">
+      <h2>Amazon EKS — Elastic Kubernetes Service</h2>
+      <span class="tag">Containers · Kubernetes</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Amazon EKS?</h3>
+    <p>EKS enables users to manage Kubernetes applications in the AWS cloud or on-premises. Any standard Kubernetes application can be migrated to EKS <strong>without altering code</strong>.</p>
+
+    <h3>EKS Cluster Components</h3>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>Control Plane</h4>
+        <ul>
+          <li>Runs Kubernetes software (etcd, API server)</li>
+          <li>Not shared with other clusters</li>
+          <li>Runs across multiple Availability Zones</li>
+          <li>Auto-replaces unhealthy instances</li>
+        </ul>
+      </div>
+      <div class="compare-card">
+        <h4>Node Types</h4>
+        <ul>
+          <li><strong>Self-managed nodes</strong> — EC2 in Auto Scaling Group</li>
+          <li><strong>Managed node groups</strong> — automated lifecycle mgmt</li>
+          <li><strong>AWS Fargate</strong> — serverless pods</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>AWS Service Integrations</h3>
+    <ul>
+      <li><strong>Images</strong> — Amazon ECR</li>
+      <li><strong>Load distribution</strong> — AWS ELB</li>
+      <li><strong>Authentication</strong> — AWS IAM</li>
+      <li><strong>Isolation</strong> — Amazon VPC</li>
+    </ul>
+
+    <h3>Creation Tools</h3>
+    <ul>
+      <li><strong>eksctl</strong> — CLI utility for creating/managing EKS clusters</li>
+      <li><strong>AWS Management Console + AWS CLI</strong></li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> $0.10/hour per EKS cluster + EC2/EBS or Fargate (CPU+memory) costs for nodes.</div>
+  </div>
+</div>
+
+<!-- ===================== ECS ===================== -->
+<div class="topic-section" id="ecs">
+  <div class="topic-header">
+    <div class="topic-icon-lg">📦</div>
+    <div class="topic-header-text">
+      <h2>Amazon ECS — Elastic Container Service</h2>
+      <span class="tag">Containers</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Amazon ECS?</h3>
+    <p>ECS is a regional container orchestration service (like Docker) that allows executing, stopping, and managing containers on a cluster. Containers are defined in <strong>task definitions</strong> (JSON format) which specify container images to run.</p>
+
+    <h3>Key Concepts</h3>
+    <ul>
+      <li><strong>Task Definition</strong> — JSON config specifying container images, CPU, memory, ports</li>
+      <li><strong>Task</strong> — running instance of a task definition</li>
+      <li><strong>Service</strong> — runs and maintains a desired number of tasks simultaneously</li>
+      <li><strong>Cluster</strong> — logical grouping of tasks/services running on EC2 or Fargate</li>
+      <li><strong>Container Agent</strong> — runs on each EC2 instance; sends resource data to ECS</li>
+    </ul>
+
+    <h3>Application Load Balancer Features</h3>
+    <ul>
+      <li>Enables containers to use <strong>dynamic host port mapping</strong></li>
+      <li>Allows multiple tasks from the same service per container instance</li>
+      <li>Supports path-based routing and priority rules</li>
+      <li>Multiple services can use the same listener port on a single ALB</li>
+    </ul>
+
+    <h3>Integrations</h3>
+    <p>IAM, EC2 Auto Scaling, ELB, ECR, CloudFormation, App Mesh, SageMaker, AWS Batch, Amazon Lex</p>
+
+    <h3>Use Cases</h3>
+    <ul>
+      <li><strong>Microservices</strong> — decoupled independent services</li>
+      <li><strong>Batch Jobs</strong> — short-lived Docker containers processed as ECS tasks</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== ECR ===================== -->
+<div class="topic-section" id="ecr">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🗃️</div>
+    <div class="topic-header-text">
+      <h2>Amazon ECR — Elastic Container Registry</h2>
+      <span class="tag">Containers · Registry</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is ECR?</h3>
+    <p>ECR is a managed service to store, manage, share, and deploy container images and artifacts. Integrated with ECS, EKS, Lambda, and Fargate for easy deployments.</p>
+
+    <h3>Key Features</h3>
+    <ul>
+      <li>Stores both user-created containers and AWS Marketplace container software</li>
+      <li>IAM enables resource-level control per repository</li>
+      <li>Supports <strong>public and private</strong> repositories</li>
+      <li><strong>Amazon ECR Public Gallery</strong> — portal for all public repositories</li>
+      <li>Images stored in <strong>Amazon S3</strong> — 11 nines durability (99.999999999%)</li>
+      <li>Cross-region and cross-account replication</li>
+      <li>HTTPS encryption in transit; AES-256 at rest (SSE-S3 or customer KMS keys)</li>
+      <li>Lifecycle policies to manage image lifecycle</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> Free tier: 500 MB-month private storage for 1 year; 50 GB-month public. 500 GB free internet transfer (public) without sign-up; 5 TB with sign-up.</div>
+  </div>
+</div>
+
+<!-- ===================== S3 ===================== -->
+<div class="topic-section" id="s3">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🪣</div>
+    <div class="topic-header-text">
+      <h2>Amazon S3 — Simple Storage Service</h2>
+      <span class="tag">Storage · Object</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>Basics</h3>
+    <ul>
+      <li>Object-based storage; files stored in <strong>Buckets</strong></li>
+      <li>Files can be 0 to 5 TB; bucket names must be <strong>globally unique</strong></li>
+      <li>Successful upload returns HTTP 200</li>
+      <li>Strong consistency for PUTs, overwrites, deletes, and list operations</li>
+      <li>All objects are <strong>private by default</strong></li>
+    </ul>
+
+    <h3>Storage Classes</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Class</th><th>Suitable For</th><th>Durability</th><th>Availability</th><th>Min. Days</th></tr>
+        <tr><td>S3 Standard</td><td>Frequently accessed data</td><td>11 9s</td><td>99.99%</td><td>None</td></tr>
+        <tr><td>S3 Standard-IA</td><td>Infrequent access</td><td>11 9s</td><td>99.90%</td><td>30 days</td></tr>
+        <tr><td>S3 Intelligent-Tiering</td><td>Unknown access patterns</td><td>11 9s</td><td>99.90%</td><td>30 days</td></tr>
+        <tr><td>S3 One Zone-IA</td><td>Non-critical data</td><td>11 9s</td><td>99.50%</td><td>30 days</td></tr>
+        <tr><td>S3 Glacier</td><td>Long-term archive (3-5 yrs)</td><td>11 9s</td><td>99.99%</td><td>90 days</td></tr>
+        <tr><td>S3 Glacier Deep Archive</td><td>Long-term archive</td><td>11 9s</td><td>99.99%</td><td>180 days</td></tr>
+      </table>
+    </div>
+
+    <h3>Key Properties</h3>
+    <ul>
+      <li><strong>Versioning</strong> — multiple versions of objects in the same bucket</li>
+      <li><strong>Static Website Hosting</strong> — no server-side technology needed</li>
+      <li><strong>Encryption</strong> — SSE-S3, SSE-KMS, or client-side</li>
+      <li><strong>Object Lock</strong> — block version deletion for a defined period (enable only at bucket creation)</li>
+      <li><strong>Transfer Acceleration</strong> — uses CloudFront edge locations for fast global uploads</li>
+      <li><strong>Replication</strong> — replicate data between buckets in same or different regions</li>
+      <li><strong>Lifecycle Policies</strong> — auto-transition objects to cheaper storage classes</li>
+    </ul>
+
+    <h3>Permissions</h3>
+    <ul>
+      <li><strong>ACL</strong> — grant read/write to another AWS account</li>
+      <li><strong>Bucket Policy</strong> — JSON-based advanced permissions</li>
+      <li><strong>CORS</strong> — allow cross-origin access to S3 resources</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== BACKUP ===================== -->
+<div class="topic-section" id="backup">
+  <div class="topic-header">
+    <div class="topic-icon-lg">💾</div>
+    <div class="topic-header-text">
+      <h2>AWS Backup</h2>
+      <span class="tag">Storage · Backup</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is AWS Backup?</h3>
+    <p>AWS Backup automates and governs data backup across the AWS cloud and on-premises. It provides a backup console, APIs, and CLI to manage backups across instances and databases.</p>
+    <h3>Key Features</h3>
+    <ul>
+      <li>Policy-based, tag-based, and resource-based backup</li>
+      <li>Scheduled backup plans across accounts and regions</li>
+      <li>Incremental backup — only backs up changes after first full backup</li>
+      <li>Backup retention plans with automatic expiry</li>
+      <li>Dashboard to monitor backup and restore activities</li>
+      <li>Separate encryption keys per resource</li>
+      <li>Lifecycle policies to auto-move EFS backups to cold storage</li>
+      <li>Cross-account backup and restore within AWS Organizations</li>
+      <li>Cross-region backups for disaster recovery</li>
+      <li>Integration with CloudWatch, CloudTrail, and SNS for monitoring and notifications</li>
+    </ul>
+    <div class="tip-box"><strong>💰 Pricing:</strong> Monthly charges based on backup storage used and amount of data restored.</div>
+  </div>
+</div>
+
+<!-- ===================== EBS ===================== -->
+<div class="topic-section" id="ebs">
+  <div class="topic-header">
+    <div class="topic-icon-lg">💿</div>
+    <div class="topic-header-text">
+      <h2>AWS EBS — Elastic Block Store</h2>
+      <span class="tag">Storage · Block</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is EBS?</h3>
+    <p>EBS is a persistent block-level storage (volume) service for Amazon EC2. <strong>EBS is AZ-specific</strong> and automatically replicated within its AZ for high availability and durability.</p>
+
+    <h3>EBS Volume Types</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Type</th><th>Details</th><th>Use Cases</th></tr>
+        <tr><td>General Purpose SSD (gp2/gp3)</td><td>3,000–20,000 IOPS/volume; 1 GiB–16 TiB</td><td>Boot, dev/test, virtual desktops</td></tr>
+        <tr><td>Provisioned IOPS SSD (io1/io2)</td><td>16,000+ IOPS; consistent low-latency</td><td>MongoDB, MySQL, latency-critical apps</td></tr>
+        <tr><td>Throughput Optimized HDD (st1)</td><td>500 MB/s max; frequently accessed large sequential I/O</td><td>Big data, data warehouses, streaming</td></tr>
+        <tr><td>Cold HDD (sc1)</td><td>250 MiB/s; less frequently accessed</td><td>Colder data requiring fewer scans</td></tr>
+      </table>
+    </div>
+
+    <h3>Key Points</h3>
+    <ul>
+      <li>Locked to a <strong>single Availability Zone</strong> — to move across AZs, take a snapshot first</li>
+      <li>Default volume type: <strong>General Purpose SSD (gp2)</strong></li>
+      <li>Can detach from one EC2 instance and attach to another quickly</li>
+      <li>RAID 0 (increase performance) or RAID 1 (fault tolerance)</li>
+      <li>Unencrypted volumes can be encrypted using an encrypted snapshot</li>
+      <li>Snapshot of an encrypted volume is encrypted by default</li>
+    </ul>
+
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>EBS (Persistent)</h4>
+        <ul>
+          <li>Persistent, reliable, durable storage</li>
+          <li>Can detach and re-attach to instances</li>
+          <li>Boots faster than instance stores</li>
+        </ul>
+      </div>
+      <div class="compare-card">
+        <h4>Instance Store (Ephemeral)</h4>
+        <ul>
+          <li>Physically attached to EC2 — lowest latency, massive IOPS</li>
+          <li>Data lost on instance stop or crash</li>
+          <li>Max 10 GiB volume size</li>
+          <li>Cannot create snapshots</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== EFS ===================== -->
+<div class="topic-section" id="efs">
+  <div class="topic-header">
+    <div class="topic-icon-lg">📂</div>
+    <div class="topic-header-text">
+      <h2>AWS EFS — Elastic File System</h2>
+      <span class="tag">Storage · File System</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is EFS?</h3>
+    <p>Amazon EFS provides a scalable, fully managed elastic NFS-based distributed file system. It is persistent, scales to petabytes, and is designed to share with <strong>thousands of EC2 instances</strong> in parallel. It is a <strong>regional service</strong>, automatically replicated across multiple AZs.</p>
+
+    <h3>Storage Classes</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Class</th><th>Use</th></tr>
+        <tr><td>Standard</td><td>Frequently accessed files</td></tr>
+        <tr><td>Infrequent Access (EFS-IA)</td><td>Files not accessed every day — $0.025/GB-month</td></tr>
+      </table>
+    </div>
+
+    <h3>Access Modes</h3>
+    <ul>
+      <li><strong>Performance Modes:</strong> General Purpose (low latency) or Max I/O (high throughput)</li>
+      <li><strong>Throughput Modes:</strong> Bursting (grows with file system) or Provisioned (fixed capacity)</li>
+    </ul>
+
+    <h3>Key Features</h3>
+    <ul>
+      <li>POSIX-compliant NFS (NFSv4), SSD-based, consistent low latencies</li>
+      <li>Access across AZs, regions, VPCs, and on-premises via Direct Connect or VPN</li>
+      <li>EFS Lifecycle Management for auto-moving files to IA storage</li>
+      <li>Integrated with AWS DataSync, CloudWatch, CloudTrail</li>
+      <li>Encryption at transit (TLS) and rest (KMS)</li>
+      <li>EFS is <strong>more expensive than EBS</strong></li>
+      <li>Performance mode cannot be changed after creation</li>
+      <li>Not suitable for boot volumes or highly transactional SQL/NoSQL databases</li>
+    </ul>
+
+    <h3>Use Cases</h3>
+    <p>Mission-critical apps, microservices, container storage, web serving, media/entertainment, database backups, analytics, machine learning</p>
+  </div>
+</div>
+
+<!-- ===================== GLACIER ===================== -->
+<div class="topic-section" id="glacier">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🧊</div>
+    <div class="topic-header-text">
+      <h2>Amazon S3 Glacier</h2>
+      <span class="tag">Storage · Archive</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is S3 Glacier?</h3>
+    <p>S3 Glacier is a web service with vaults for <strong>long-term data archiving and backup</strong>. It is the <strong>cheapest S3 storage class</strong> with 11 nines durability. Supports unlimited data — photos, videos, documents, data lakes, compliance data.</p>
+
+    <h3>Data Retrieval Options</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Option</th><th>Time</th></tr>
+        <tr><td>Expedited</td><td>1–5 minutes</td></tr>
+        <tr><td>Standard</td><td>3–5 hours</td></tr>
+        <tr><td>Bulk</td><td>5–12 hours</td></tr>
+      </table>
+    </div>
+
+    <h3>Key Features</h3>
+    <ul>
+      <li>Vaults can be created, deleted, locked, listed, tagged, and configured</li>
+      <li>Amazon SNS notifications when jobs complete</li>
+      <li>S3 Glacier Select — query specific archive bytes using SQL (SELECT/FROM/WHERE) on uncompressed CSV data</li>
+      <li>Only SSE-KMS and SSE-S3 encryption supported</li>
+      <li>Does <strong>not</strong> provide real-time data retrieval</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> Free tier: 10 GB standard retrieval/month. Data transfer out within same region is free.</div>
+  </div>
+</div>
+
+<!-- ===================== AURORA ===================== -->
+<div class="topic-section" id="aurora">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🌌</div>
+    <div class="topic-header-text">
+      <h2>Amazon Aurora</h2>
+      <span class="tag">Database · Managed RDS</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Aurora?</h3>
+    <p>Aurora is AWS's fully managed RDS service compatible with <strong>MySQL and PostgreSQL only</strong>. AWS claims 5× throughput over MySQL and 3× over PostgreSQL.</p>
+
+    <h3>High Availability</h3>
+    <ul>
+      <li>Only supported in regions with minimum 3 AZs</li>
+      <li>99.99% availability — 2 copies in each AZ × 3 AZs = <strong>6 copies total</strong></li>
+      <li>Up to <strong>15 read replicas</strong> (vs 5 in standard RDS)</li>
+      <li>Scales up to <strong>128 TB</strong> per DB instance</li>
+      <li>Read replicas have ≤100ms lag from primary</li>
+    </ul>
+
+    <h3>Aurora Features</h3>
+    <ul>
+      <li><strong>Aurora Global Database</strong> — spans multiple regions, low-latency global access, usable as cross-region DR</li>
+      <li><strong>Aurora Multi-Master</strong> — MySQL only; write operations scaled across multiple AZs, no single point of failure</li>
+      <li><strong>Aurora Serverless</strong> — scales in/out based on load; specify min (2 GB RAM) and max (488 GB RAM); for intermittent/unpredictable workloads; available for MySQL and PostgreSQL</li>
+      <li><strong>Fault Tolerance + Self-Healing</strong> — can handle loss of 2 copies without impacting writes, 3 copies without impacting reads; disks continuously scanned and repaired</li>
+    </ul>
+
+    <div class="info-box"><strong>Security:</strong> Data resides in VPC. Encryption at rest via AWS KMS; encryption in transit via SSL.</div>
+  </div>
+</div>
+
+<!-- ===================== DOCUMENTDB ===================== -->
+<div class="topic-section" id="documentdb">
+  <div class="topic-header">
+    <div class="topic-icon-lg">📄</div>
+    <div class="topic-header-text">
+      <h2>Amazon DocumentDB</h2>
+      <span class="tag">Database · Document</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is DocumentDB?</h3>
+    <p>DocumentDB is a fully managed document database service compatible with <strong>MongoDB</strong>. Ideal for storing, querying, and indexing <strong>JSON data</strong>.</p>
+    <h3>Key Features</h3>
+    <ul>
+      <li>Compatible with MongoDB 3.6 and 4.0</li>
+      <li>Migrate MongoDB using AWS DMS (Database Migration Service)</li>
+      <li>Storage auto-scales in 10 GB increments up to 64 TB</li>
+      <li>Up to <strong>15 read replicas</strong> with single-digit ms latency</li>
+      <li>Instances reside in VPCs with security group access control</li>
+      <li>Role-based access control (RBAC)</li>
+      <li>Minimum <strong>6 copies across 3 AZs</strong> for fault tolerance</li>
+      <li>Self-healing — data blocks and disks continuously scanned and repaired</li>
+      <li>Snapshots user-initiated; stored in S3 until explicitly deleted</li>
+    </ul>
+    <div class="tip-box"><strong>💰 Pricing:</strong> Based on instance hours, I/O requests, and backup storage.</div>
+  </div>
+</div>
+
+<!-- ===================== DYNAMODB ===================== -->
+<div class="topic-section" id="dynamodb">
+  <div class="topic-header">
+    <div class="topic-icon-lg">⚙️</div>
+    <div class="topic-header-text">
+      <h2>Amazon DynamoDB</h2>
+      <span class="tag">Database · NoSQL · Serverless</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is DynamoDB?</h3>
+    <p>DynamoDB is a <strong>Key-value and Document DB</strong> — serverless, no servers to manage. Delivers <strong>single-digit millisecond latency</strong>. Handles 20 million requests/second and 10 trillion requests/day.</p>
+
+    <h3>Keys</h3>
+    <ul>
+      <li><strong>Primary Key</strong> — uniquely identifies each item (e.g., Student_ID)</li>
+      <li><strong>Partition Key</strong> — primary key with one attribute</li>
+      <li><strong>Partition Key + Sort Key</strong> — composite primary key for items without a unique attribute</li>
+    </ul>
+
+    <h3>Secondary Indexes</h3>
+    <ul>
+      <li><strong>Global Secondary Index (GSI)</strong> — different partition and sort keys from the table</li>
+      <li><strong>Local Secondary Index (LSI)</strong> — same partition key but different sort key</li>
+    </ul>
+
+    <h3>DynamoDB Accelerator (DAX)</h3>
+    <ul>
+      <li>Fully managed in-memory cache for DynamoDB</li>
+      <li>Up to <strong>10× performance</strong> improvement; ms → microseconds</li>
+      <li>For <strong>read-intensive</strong> workloads (not strongly consistent reads)</li>
+      <li>Horizontal scaling (add up to 10 read replicas); Vertical scaling (change node type)</li>
+    </ul>
+
+    <h3>Consistency Models</h3>
+    <ul>
+      <li><strong>Eventually Consistent Reads</strong> — may return stale data after recent write</li>
+      <li><strong>Strongly Consistent Reads</strong> — returns most up-to-date data</li>
+    </ul>
+
+    <h3>Throughput Capacity</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Unit</th><th>Definition</th></tr>
+        <tr><td>Read Capacity Unit (RCU)</td><td>1 strongly consistent read or 2 eventually consistent reads per second for up to 4 KB</td></tr>
+        <tr><td>Write Capacity Unit (WCU)</td><td>1 write per second for up to 1 KB</td></tr>
+        <tr><td>Provisioned</td><td>Pre-defined RCU/WCU range — for predictable workloads</td></tr>
+        <tr><td>On-Demand</td><td>No pre-defined capacity — for unpredictable workloads</td></tr>
+      </table>
+    </div>
+
+    <h3>DynamoDB Transactions</h3>
+    <p>ACID properties within a single account across tables. Each transaction can store up to <strong>4 MB of data and 25 unique items</strong>. Use cases: financial transactions, gaming, high-volume order processing.</p>
+
+    <h3>DynamoDB Streams</h3>
+    <p>Captures item-level changes in near real-time. Stream data stored up to 24 hours. Commonly consumed by AWS Lambda or Kinesis Client Library (KCL).</p>
+  </div>
+</div>
+
+<!-- ===================== ELASTICACHE ===================== -->
+<div class="topic-section" id="elasticache">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🚀</div>
+    <div class="topic-header-text">
+      <h2>Amazon ElastiCache</h2>
+      <span class="tag">Database · In-Memory Cache</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is ElastiCache?</h3>
+    <p>ElastiCache is a fully managed in-memory data store. It significantly improves latency and throughput for read-heavy workloads. Works with both <strong>Redis</strong> and <strong>Memcached</strong> engines.</p>
+
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>Redis</h4>
+        <ul>
+          <li>Non-volatile (persistent) data</li>
+          <li>Complex data types (strings, hashes, geospatial)</li>
+          <li>No multi-threading</li>
+          <li>Scaling via shards (not nodes)</li>
+          <li>Multi-AZ via read replica in another AZ</li>
+          <li>Failover to read replica possible</li>
+        </ul>
+      </div>
+      <div class="compare-card">
+        <h4>Memcached</h4>
+        <ul>
+          <li>Volatile data</li>
+          <li>Simple data types only</li>
+          <li>Multi-threading supported</li>
+          <li>Scaling by adding/removing nodes</li>
+          <li>Nodes span multiple AZs</li>
+          <li>No Multi-AZ failover</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Best Practices</h3>
+    <ul>
+      <li>Web sessions behind load balancer → use <strong>Redis</strong></li>
+      <li>Caching RDS query results → use <strong>Memcached</strong> in front of RDS</li>
+      <li>Gaming dashboards → Memcached for fast fetching</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== RDS ===================== -->
+<div class="topic-section" id="rds">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🗄️</div>
+    <div class="topic-header-text">
+      <h2>Amazon RDS — Relational Database Service</h2>
+      <span class="tag">Database · Managed</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>Supported Engines</h3>
+    <p>MySQL, PostgreSQL, MariaDB, Oracle, MS SQL Server, Amazon Aurora</p>
+
+    <h3>Multi-AZ vs Read Replicas</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Feature</th><th>Multi-AZ</th><th>Read Replica</th></tr>
+        <tr><td>Replication</td><td>Synchronous</td><td>Asynchronous</td></tr>
+        <tr><td>Purpose</td><td>Disaster Recovery</td><td>Performance enhancement</td></tr>
+        <tr><td>Failover</td><td>Automatic</td><td>Manual promotion</td></tr>
+        <tr><td>Scope</td><td>Same region, 2 AZs</td><td>Same AZ, cross-AZ, or cross-region</td></tr>
+        <tr><td>Durability</td><td>High durability</td><td>High scalability</td></tr>
+      </table>
+    </div>
+
+    <h3>Backups</h3>
+    <ul>
+      <li>Default retention: <strong>7 days</strong> (console); 1 day (CLI/API)</li>
+      <li>Maximum automatic backup retention: <strong>35 days</strong></li>
+      <li>Setting retention to 0 disables automatic backup</li>
+      <li>Maximum 100 manual snapshots per region</li>
+    </ul>
+
+    <h3>DB Instance Classes</h3>
+    <ul>
+      <li><strong>Standard</strong> (m-series) — balanced compute, memory, network</li>
+      <li><strong>Burstable Performance</strong> (t-series) — baseline CPU with burst capability</li>
+      <li><strong>Memory Optimized</strong> (r, x, z series) — for large in-memory datasets</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== REDSHIFT ===================== -->
+<div class="topic-section" id="redshift">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🔴</div>
+    <div class="topic-header-text">
+      <h2>Amazon Redshift</h2>
+      <span class="tag">Data Warehouse · Analytics</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Redshift?</h3>
+    <p>Redshift is a fast, fully managed, petabyte-scale data warehouse service. Highly scalable — under <strong>$1,000 per TB per year</strong>, which is less than a tenth of most competing solutions.</p>
+
+    <h3>Cluster Configuration</h3>
+    <ul>
+      <li><strong>Single Node</strong> — 160 GB</li>
+      <li><strong>Multi-Node</strong> — Leader Node (manages connections/queries) + up to <strong>128 Compute Nodes</strong> (store data, execute queries)</li>
+    </ul>
+
+    <h3>Key Features</h3>
+    <ul>
+      <li>Columnar storage + multiple compression techniques — less space than traditional RDBMS</li>
+      <li>No indexes or materialized views needed</li>
+      <li><strong>MPP (Massively Parallel Processing)</strong> — auto-distributes data and query load across nodes</li>
+      <li>Default backup retention: 1 day; max 35 days</li>
+      <li>Always maintains at least 3 copies: original + compute node replica + S3 backup</li>
+      <li>Asynchronous snapshot replication to S3 in another region for DR</li>
+      <li>Only available in <strong>1 AZ</strong> — but can store snapshots to new AZs on outage</li>
+    </ul>
+
+    <div class="info-box"><strong>Security:</strong> Data encrypted in transit via SSL; at rest via AES-256. Keys managed by Redshift, HSM, or AWS KMS.</div>
+  </div>
+</div>
+
+<!-- ===================== IAM ===================== -->
+<div class="topic-section" id="iam">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🔐</div>
+    <div class="topic-header-text">
+      <h2>AWS IAM — Identity and Access Management</h2>
+      <span class="tag">Security · Identity</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>Core Concepts</h3>
+    <ul>
+      <li><strong>Root User</strong> — first account created with complete AWS access; protect with MFA</li>
+      <li><strong>IAM User</strong> — person or service that interacts with AWS individually</li>
+      <li><strong>IAM Group</strong> — collection of IAM users; assign permissions to the group</li>
+      <li><strong>IAM Role</strong> — like a user with policies; no credentials attached; can be assumed temporarily</li>
+      <li><strong>Principal</strong> — entity making a request for action on an AWS resource</li>
+    </ul>
+
+    <h3>IAM Policies</h3>
+    <ul>
+      <li>JSON documents that define permissions — what actions are allowed/denied on which resources</li>
+      <li><strong>Resource-Based Policies</strong> — attached to a resource (e.g., S3 bucket)</li>
+      <li><strong>Identity-Based Policies</strong> — attached to users, groups, or roles</li>
+      <li><strong>AWS Managed Policies</strong> — created and managed by AWS</li>
+      <li><strong>Customer Managed Policies</strong> — created by you; more precise control</li>
+      <li><strong>Inline Policies</strong> — directly embedded in a user/group/role; 1:1 relationship</li>
+    </ul>
+
+    <h3>Security Best Practices</h3>
+    <ul>
+      <li>Grant <strong>least privilege</strong> access rights</li>
+      <li>Enable <strong>Multi-Factor Authentication (MFA)</strong></li>
+      <li>Monitor with CloudTrail</li>
+      <li>Use policy conditions for extra security</li>
+      <li>Create a strong password policy</li>
+      <li>Remove unnecessary credentials</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> IAM is provided at no additional charge. You only pay for AWS services used by account holders.</div>
+  </div>
+</div>
+
+<!-- ===================== COGNITO ===================== -->
+<div class="topic-section" id="cognito">
+  <div class="topic-header">
+    <div class="topic-icon-lg">👤</div>
+    <div class="topic-header-text">
+      <h2>Amazon Cognito</h2>
+      <span class="tag">Security · Auth</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Amazon Cognito?</h3>
+    <p>Cognito provides <strong>authentication, authorization, and user management</strong> for web and mobile apps. Enables sign-in through social providers (Google, Facebook, Amazon) and enterprise providers (Active Directory via SAML).</p>
+
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>User Pools</h4>
+        <ul>
+          <li>User repositories with sign-up/sign-in</li>
+          <li>Built-in customizable web UI</li>
+          <li>MFA, compromised credential checks</li>
+          <li>Phone and email verification</li>
+          <li>Lambda triggers for workflows</li>
+        </ul>
+      </div>
+      <div class="compare-card">
+        <h4>Identity Pools</h4>
+        <ul>
+          <li>Temporary AWS credentials for users</li>
+          <li>Access AWS resources directly</li>
+          <li>Supports Cognito User Pools, OIDC, SAML, third-party sign-in</li>
+          <li>Developer authenticated identities</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Standards Supported</h3>
+    <p>OAuth 2.0, OpenID Connect, SAML 2.0. User verification via SMS or TOTP (e.g., Google Authenticator).</p>
+  </div>
+</div>
+
+<!-- ===================== SECRETS MANAGER ===================== -->
+<div class="topic-section" id="secrets">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🔑</div>
+    <div class="topic-header-text">
+      <h2>AWS Secrets Manager</h2>
+      <span class="tag">Security · Secrets</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Secrets Manager?</h3>
+    <p>Replaces hardcoded credentials in code with an API call. Provides rotation, management, and retrieval of database passwords, OAuth tokens, and API keys. Ensures in-transit encryption between AWS and the retrieving system.</p>
+
+    <h3>Access Methods</h3>
+    <p>AWS Management Console, AWS CLI, AWS Tools for Windows PowerShell, AWS SDKs, Secrets Manager HTTPS Query API</p>
+
+    <h3>Native Rotation Support</h3>
+    <p>MySQL, PostgreSQL, Oracle, MariaDB, MS SQL Server on Amazon RDS; Amazon DocumentDB; Amazon Redshift; Amazon Aurora</p>
+
+    <h3>Key Features</h3>
+    <ul>
+      <li>Rotate secrets safely without code deployment</li>
+      <li>IAM policies to control developer access per environment</li>
+      <li>Secrets encrypted with AWS KMS keys</li>
+      <li>Integrates with CloudTrail and CloudWatch for auditing</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> No upfront costs. Charged per secret stored and per API call. KMS-encrypted secrets charged at KMS rate.</div>
+  </div>
+</div>
+
+<!-- ===================== SECURITY HUB ===================== -->
+<div class="topic-section" id="securityhub">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🛡️</div>
+    <div class="topic-header-text">
+      <h2>AWS Security Hub</h2>
+      <span class="tag">Security · Compliance</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Security Hub?</h3>
+    <p>Provides an extensive view of security in AWS and helps protect against security industry standards. Aggregates findings from GuardDuty, Inspector, Macie, IAM Access Analyzer, Firewall Manager, and AWS Partner solutions.</p>
+
+    <h3>Compliance Checks</h3>
+    <p>Continuous automated checks using <strong>CIS AWS Foundations Benchmark</strong> (43 checks) and <strong>PCI DSS</strong>. Recommends remediation steps for any issues found.</p>
+
+    <h3>Enable / Disable</h3>
+    <p>Via AWS Management Console, AWS CLI, or Terraform. Must be enabled per region. Master account costs include all member account costs.</p>
+  </div>
+</div>
+
+<!-- ===================== KMS ===================== -->
+<div class="topic-section" id="kms">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🗝️</div>
+    <div class="topic-header-text">
+      <h2>AWS KMS — Key Management Service</h2>
+      <span class="tag">Security · Encryption</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is AWS KMS?</h3>
+    <p>Secured service to create and control encryption keys. Integrated with EBS, S3, and other AWS services for data-at-rest encryption. KMS is a <strong>global service</strong> but keys are <strong>regional</strong> — keys cannot leave their region.</p>
+
+    <h3>CMK Types</h3>
+    <ul>
+      <li><strong>Symmetric CMK</strong> — 256-bit key for encryption and decryption</li>
+      <li><strong>Asymmetric CMK</strong> — RSA key pair (encrypt/decrypt or sign/verify) or ECC key pair (sign/verify)</li>
+      <li><strong>Customer Managed CMK</strong> — created, owned, managed by you; full control</li>
+      <li><strong>AWS Managed CMK</strong> — created by AWS on your behalf; cannot be used in cryptographic operations directly</li>
+    </ul>
+
+    <h3>Envelope Encryption</h3>
+    <p>Encrypts plaintext with a <strong>data key</strong>, then encrypts the data key under another key. Benefits: protects data keys, supports multiple master keys, combines strengths of algorithms.</p>
+
+    <h3>Features</h3>
+    <ul>
+      <li>Automatic key rotation once per year</li>
+      <li>CloudTrail logs every KMS request</li>
+      <li>Stores multiple encrypted copies of keys for high availability</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> Free tier: 20,000 requests/month. Each CMK: $1/month until deleted. AWS-managed CMKs: no charge.</div>
+  </div>
+</div>
+
+<!-- ===================== ACM ===================== -->
+<div class="topic-section" id="acm">
+  <div class="topic-header">
+    <div class="topic-icon-lg">📜</div>
+    <div class="topic-header-text">
+      <h2>AWS Certificate Manager (ACM)</h2>
+      <span class="tag">Security · SSL/TLS</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is ACM?</h3>
+    <p>ACM allows provisioning, managing, renewing, and deploying public and private SSL/TLS X.509 certificates. Certificates can be issued directly by ACM or imported from third parties.</p>
+
+    <h3>SSL Certificate Types</h3>
+    <ul>
+      <li><strong>EV SSL</strong> — Extended Validation (most expensive)</li>
+      <li><strong>OV SSL</strong> — Organization Validated</li>
+      <li><strong>DV SSL</strong> — Domain Validated (minimal encryption)</li>
+      <li><strong>Wildcard SSL</strong> — base domain + all subdomains</li>
+      <li><strong>Multi-Domain SSL (MDC)</strong> — up to hundreds of domains</li>
+      <li><strong>Unified Communications Certificate (UCC)</strong> — multiple domain names</li>
+    </ul>
+
+    <h3>Supported Services</h3>
+    <p>Elastic Load Balancing, Amazon CloudFront, AWS Elastic Beanstalk, Amazon API Gateway, AWS Nitro Enclaves, AWS CloudFormation</p>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> ACM certificates for integrated services are free. ACM Private CA charges apply monthly for CA operation and private certificates issued.</div>
+  </div>
+</div>
+
+<!-- ===================== AUTO SCALING ===================== -->
+<div class="topic-section" id="autoscaling">
+  <div class="topic-header">
+    <div class="topic-icon-lg">📈</div>
+    <div class="topic-header-text">
+      <h2>AWS Auto Scaling</h2>
+      <span class="tag">Management · Scaling</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Auto Scaling?</h3>
+    <p>Auto Scaling monitors applications and automatically adjusts capacity for steady, predictable performance with no manual intervention. Creates scaling plans for EC2 Instances, ECS tasks, DynamoDB, and Aurora Read Replicas.</p>
+
+    <h3>Launch Configuration vs. Launch Template</h3>
+    <ul>
+      <li>AWS recommends <strong>Launch Templates</strong> for the latest EC2 features (e.g., Dedicated Hosts)</li>
+      <li>Use Launch Templates to mix on-demand and spot instances</li>
+    </ul>
+
+    <h3>Lifecycle Hooks</h3>
+    <p>Pause EC2 instances in a <strong>wait state</strong> during scale-out or scale-in until a custom action completes. Wait state remains active until the timeout period ends.</p>
+
+    <h3>Monitoring</h3>
+    <ul>
+      <li><strong>Health Check</strong> — removes unhealthy instances from target group</li>
+      <li><strong>CloudWatch Events</strong> — submit events for launch or terminate actions</li>
+      <li><strong>CloudWatch Metrics</strong> — shows application performance statistics</li>
+      <li><strong>Notification Service</strong> — sends email alerts on scale events</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> No additional charge for Auto Scaling. You pay for the AWS resources used.</div>
+  </div>
+</div>
+
+<!-- ===================== CLOUDFORMATION ===================== -->
+<div class="topic-section" id="cloudformation">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🏗️</div>
+    <div class="topic-header-text">
+      <h2>AWS CloudFormation</h2>
+      <span class="tag">Management · IaC</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is CloudFormation?</h3>
+    <p>CloudFormation collects AWS and third-party resources and manages their lifecycle as a <strong>stack</strong>. Templates allow reusable, repeatable infrastructure deployment without managing resources individually.</p>
+
+    <h3>Core Concepts</h3>
+    <ul>
+      <li><strong>Templates</strong> — JSON or YAML files defining AWS resources</li>
+      <li><strong>Stack</strong> — single unit of resources managed together</li>
+      <li><strong>Change Sets</strong> — preview how changes to a resource impact running resources</li>
+      <li><strong>StackSets</strong> — provision/update/delete stacks across multiple accounts and regions</li>
+      <li><strong>Nested Stacks</strong> — stacks created within another stack; parent stack references child via <code>!Ref</code></li>
+    </ul>
+
+    <h3>Update Methods</h3>
+    <ul>
+      <li><strong>Direct Update</strong> — quickly deploy updates immediately</li>
+      <li><strong>Change Sets</strong> — JSON preview of changes before applying</li>
+    </ul>
+
+    <h3>Example Template (EC2)</h3>
+    <pre>EC2Instance:
+  Type: AWS::EC2::Instance
+  Properties:
+    ImageId: 1234xyz
+    KeyName: aws-keypair
+    InstanceType: t2.micro
+    SecurityGroups:
+      - !Ref EC2SecurityGroup
+    BlockDeviceMappings:
+      - DeviceName: /dev/sda1
+        Ebs:
+          VolumeSize: 50</pre>
+    <div class="tip-box"><strong>💰 Pricing:</strong> CloudFormation itself is free. You pay for the underlying resources. Handler operations: Free tier 1,000/month; $0.0009 per additional operation.</div>
+  </div>
+</div>
+
+<!-- ===================== CLOUDTRAIL ===================== -->
+<div class="topic-section" id="cloudtrail">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🕵️</div>
+    <div class="topic-header-text">
+      <h2>AWS CloudTrail</h2>
+      <span class="tag">Management · Audit</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is CloudTrail?</h3>
+    <p>CloudTrail is a global service for operational and risk auditing of AWS accounts. Records actions taken by users, roles, or services via the Console, CLI, SDKs, and APIs.</p>
+
+    <h3>Event Types</h3>
+    <ul>
+      <li><strong>Management Events</strong> — control plane operations (e.g., EC2 CreateSubnet)</li>
+      <li><strong>Data Events</strong> — S3 GetObject, DeleteObject, PutObject; Lambda function invocations</li>
+      <li><strong>CloudTrail Insights Events</strong> — unusual API activity (e.g., S3 deleteBucket)</li>
+    </ul>
+
+    <h3>Key Features</h3>
+    <ul>
+      <li>View 90 days of events in CloudTrail console; download as CSV or JSON</li>
+      <li>Aggregate trail logs from multiple accounts to a single S3 bucket</li>
+      <li>CloudTrail Insights identifies unusual API call patterns</li>
+      <li>Integrates with S3 (log storage), SNS (notifications), CloudWatch (monitoring), IAM (security)</li>
+    </ul>
+
+    <div class="info-box"><strong>CloudTrail vs CloudWatch:</strong> CloudWatch monitors health and performance of AWS services. CloudTrail logs all actions performed inside AWS — the audit trail.</div>
+  </div>
+</div>
+
+<!-- ===================== CLOUDWATCH ===================== -->
+<div class="topic-section" id="cloudwatch">
+  <div class="topic-header">
+    <div class="topic-icon-lg">📊</div>
+    <div class="topic-header-text">
+      <h2>Amazon CloudWatch</h2>
+      <span class="tag">Management · Monitoring</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is CloudWatch?</h3>
+    <p>CloudWatch monitors and manages AWS services by providing data and actionable insights. Collects monitoring data in the form of <strong>logs, metrics, and events</strong> from AWS resources, applications, and on-premises servers.</p>
+
+    <h3>Key Capabilities</h3>
+    <ul>
+      <li>Custom dashboards to display additional metrics</li>
+      <li><strong>CloudWatch Alarms</strong> — monitor metrics and send notifications or trigger actions at threshold breaches</li>
+      <li>Cross-account visibility across dashboards and alarms (useful with AWS Organizations)</li>
+      <li><strong>Container Insights</strong> — metrics and logs from ECS, EKS, Kubernetes</li>
+      <li><strong>Lambda Insights</strong> — system-level metrics for serverless Lambda functions</li>
+    </ul>
+
+    <h3>CloudWatch Agent</h3>
+    <ul>
+      <li>Installed on EC2 instances for system-level metrics and custom metrics</li>
+      <li>Supports <strong>StatsD</strong> (Linux and Windows) and <strong>collectd</strong> (Linux only) protocols</li>
+      <li>Default namespace: <strong>CWAgent</strong> (configurable)</li>
+    </ul>
+
+    <h3>Integrations</h3>
+    <p>Amazon SNS (notifications), EC2 Auto Scaling, AWS CloudTrail, AWS IAM</p>
+  </div>
+</div>
+
+<!-- ===================== CONFIG ===================== -->
+<div class="topic-section" id="config">
+  <div class="topic-header">
+    <div class="topic-icon-lg">⚙️</div>
+    <div class="topic-header-text">
+      <h2>AWS Config</h2>
+      <span class="tag">Management · Compliance</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is AWS Config?</h3>
+    <p>Continuously monitors and evaluates configurations of AWS resources. Creates a snapshot of configurations and generates notifications whenever a resource is created, modified, or deleted.</p>
+
+    <h3>Config Rules</h3>
+    <ul>
+      <li><strong>Managed Rules</strong> — predefined by AWS</li>
+      <li><strong>Custom Rules</strong> — Lambda-backed custom compliance checks</li>
+      <li>Up to <strong>150 AWS Config rules per region</strong></li>
+    </ul>
+
+    <h3>Aggregation</h3>
+    <p>Config aggregates configuration and compliance data from multiple accounts and regions, single account and multiple regions, or an entire AWS Organization.</p>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> $0.003 per configuration item recorded per region. Charges per Config rule evaluated. Additional charges for integrations with other services.</div>
+  </div>
+</div>
+
+<!-- ===================== ORGANIZATIONS ===================== -->
+<div class="topic-section" id="organizations">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🏢</div>
+    <div class="topic-header-text">
+      <h2>AWS Organizations</h2>
+      <span class="tag">Management · Multi-Account</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is AWS Organizations?</h3>
+    <p>A global service to consolidate and manage multiple AWS accounts. The main account is the <strong>management account</strong> (cannot be changed). Other accounts are <strong>member accounts</strong> belonging to a single organization.</p>
+
+    <h3>Key Features</h3>
+    <ul>
+      <li>Security boundaries with multiple member accounts</li>
+      <li>Organizes accounts into <strong>Organizational Units (OUs)</strong></li>
+      <li><strong>Service Control Policies (SCPs)</strong> — governance boundaries for OUs ensuring security compliance</li>
+      <li>Cost allocation tags for tracking AWS costs</li>
+      <li>Consolidated billing — combines usage for volume discounts</li>
+    </ul>
+
+    <h3>Integrations</h3>
+    <p>CloudTrail (audit), AWS Backup, AWS Control Tower, Amazon GuardDuty, AWS Resource Access Manager (RAM)</p>
+
+    <h3>Migrating a Member Account</h3>
+    <ol>
+      <li>Remove member account from old Organization</li>
+      <li>Send invitation from new Organization</li>
+      <li>Accept invitation from the member account</li>
+    </ol>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> AWS Organizations is free. Charges apply to resources used by accounts in the organization.</div>
+  </div>
+</div>
+
+<!-- ===================== SYSTEMS MANAGER ===================== -->
+<div class="topic-section" id="systemsmanager">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🔧</div>
+    <div class="topic-header-text">
+      <h2>AWS Systems Manager</h2>
+      <span class="tag">Management · Operations</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Systems Manager?</h3>
+    <p>Helps users manage EC2 and on-premises systems at scale. Detects insights about infrastructure state, detects problems, and enables patch automation for compliance. Supports both <strong>Windows and Linux</strong>.</p>
+
+    <h3>Key Capabilities</h3>
+    <ul>
+      <li>Integrated with CloudWatch metrics/dashboards and AWS Config</li>
+      <li>Discover and audit installed software</li>
+      <li>Group 100+ resource types into applications, business units, environments</li>
+      <li>View OS patch levels, installed software, and compliance state</li>
+      <li>Distribute multiple software versions safely across instances</li>
+      <li>Patch instances on schedule for compliance</li>
+      <li>Reduce errors by applying configurable parameters via Parameter Store</li>
+    </ul>
+
+    <h3>How It Works</h3>
+    <p>Install the <strong>SSM Agent</strong> on the system. Ensure EC2 instances have a proper IAM role allowing SSM actions. If SSM cannot control an instance, check the SSM Agent and IAM role.</p>
+  </div>
+</div>
+
+<!-- ===================== CODEBUILD ===================== -->
+<div class="topic-section" id="codebuild">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🔨</div>
+    <div class="topic-header-text">
+      <h2>AWS CodeBuild</h2>
+      <span class="tag">Developer · CI</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is CodeBuild?</h3>
+    <p>Fully managed continuous integration service — builds and tests code, produces artifacts. Developers don't need to manage build servers or wait in build queues. Runs continuously, avoiding wait time for concurrent jobs.</p>
+
+    <h3>Key Features</h3>
+    <ul>
+      <li>Easy setup — use your own environment or a preconfigured one</li>
+      <li>Works with Jenkins, Git, and other existing tools</li>
+      <li>Auto-scales for concurrent builds</li>
+      <li>Automated builds — code changes trigger automatic builds and tests</li>
+      <li>Pay only for build time used (idle time not billed)</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> First 100 build minutes free. Remaining charged per instance type per build minute.</div>
+  </div>
+</div>
+
+<!-- ===================== CODECOMMIT ===================== -->
+<div class="topic-section" id="codecommit">
+  <div class="topic-header">
+    <div class="topic-icon-lg">💻</div>
+    <div class="topic-header-text">
+      <h2>AWS CodeCommit</h2>
+      <span class="tag">Developer · Source Control</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is CodeCommit?</h3>
+    <p>A version control service hosted by AWS — privately store and manage assets (documents, source code, binaries). AWS manages scaling and version control infrastructure entirely.</p>
+
+    <h3>Features</h3>
+    <ul>
+      <li>Encrypted code (high security)</li>
+      <li>Collaborative work via IAM users with different security groups</li>
+      <li>Easy scalability and third-party tool integration</li>
+    </ul>
+
+    <h3>Pricing</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Tier</th><th>Users</th><th>Storage</th><th>Git Requests</th></tr>
+        <tr><td>Free Tier</td><td>First 5 active users</td><td>50 GB</td><td>10,000/month</td></tr>
+        <tr><td>Additional Users</td><td>Beyond 5 users</td><td>10 GB/user</td><td>2,000/month</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CODEDEPLOY ===================== -->
+<div class="topic-section" id="codedeploy">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🚢</div>
+    <div class="topic-header-text">
+      <h2>AWS CodeDeploy</h2>
+      <span class="tag">Developer · Deployment</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is CodeDeploy?</h3>
+    <p>Automates application deployments to EC2 instances, on-premises instances, Lambda functions, or ECS services. Deploys: Code, Serverless Functions, Web & Config files, Executables, Scripts, Multimedia.</p>
+
+    <h3>How It Works</h3>
+    <ol>
+      <li>Finalize the application <strong>revision</strong> to deploy</li>
+      <li>Set the <strong>deployment configuration</strong> (AppSpec YAML file with source/destination)</li>
+      <li>Deploy the revision to the <strong>deployment group</strong> (cloud location)</li>
+    </ol>
+
+    <h3>Features</h3>
+    <ul>
+      <li>Rapid release of new features</li>
+      <li>Maximizes application availability during deployment (avoids downtime)</li>
+      <li>Easy launch and tracking of deployment status</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> Free code deployment to EC2 or Lambda. $0.02 per on-premises instance deployment.</div>
+  </div>
+</div>
+
+<!-- ===================== DMS ===================== -->
+<div class="topic-section" id="dms">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🔄</div>
+    <div class="topic-header-text">
+      <h2>AWS Database Migration Service (DMS)</h2>
+      <span class="tag">Developer · Migration</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is DMS?</h3>
+    <p>Cloud service to migrate relational databases from on-premises, EC2, or RDS to AWS securely — with <strong>minimal downtime</strong> (application keeps running during migration). Supports both <strong>homogeneous</strong> and <strong>heterogeneous</strong> migrations.</p>
+
+    <h3>Supported Sources & Targets</h3>
+    <ul>
+      <li><strong>Sources:</strong> Oracle, MS SQL Server, PostgreSQL, Db2 LUW, SAP, MySQL, MariaDB, MongoDB, Amazon Aurora</li>
+      <li><strong>Targets:</strong> Oracle, MS SQL, PostgreSQL, SAP ASE, MySQL, Amazon Redshift, Amazon S3, Amazon DynamoDB</li>
+    </ul>
+
+    <h3>Heterogeneous Migration</h3>
+    <p>Use <strong>AWS Schema Conversion Tool (AWS SCT)</strong> alongside DMS to convert the schema before migrating the data.</p>
+  </div>
+</div>
+
+<!-- ===================== API GATEWAY ===================== -->
+<div class="topic-section" id="apigateway">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🔗</div>
+    <div class="topic-header-text">
+      <h2>Amazon API Gateway</h2>
+      <span class="tag">Networking · APIs</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is API Gateway?</h3>
+    <p>Creates, publishes, maintains, monitors, and secures APIs at any scale. Forms the app-facing part of the AWS serverless infrastructure with Lambda. Combines with EC2, Lambda, or any web application back-end.</p>
+
+    <h3>API Types</h3>
+    <ul>
+      <li><strong>RESTful APIs</strong> — HTTP-based, stateless, standard HTTP methods (GET, POST, PUT, PATCH, DELETE)</li>
+      <li><strong>WebSocket APIs</strong> — stateful, full-duplex communication; routes messages based on content</li>
+    </ul>
+
+    <h3>Endpoint Types</h3>
+    <ul>
+      <li><strong>Edge-Optimized</strong> — reduced latency globally via CloudFront</li>
+      <li><strong>Regional</strong> — reduced latency for same-region requests; configurable CDN + WAF</li>
+      <li><strong>Private</strong> — REST APIs securely exposed only within VPC</li>
+    </ul>
+
+    <h3>Security Options</h3>
+    <p>Resource-based policies, IAM Permissions, Lambda Authorizer (Custom Authorizers), Cognito User Pools</p>
+
+    <h3>Integrations</h3>
+    <p>CloudTrail (logging), CloudWatch Metrics (monitoring), AWS WAF (protection), AWS X-Ray (performance tracing)</p>
+  </div>
+</div>
+
+<!-- ===================== CLOUDFRONT ===================== -->
+<div class="topic-section" id="cloudfront">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🌍</div>
+    <div class="topic-header-text">
+      <h2>Amazon CloudFront</h2>
+      <span class="tag">Networking · CDN</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is CloudFront?</h3>
+    <p>CloudFront is a Content Delivery Network (CDN) that securely delivers data worldwide with <strong>low latency and high transfer speeds</strong>. Uses edge locations (small data centers) to cache data close to users.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-title">CloudFront Distribution Flow</div>
+      <svg class="arch-diagram" viewBox="0 0 680 140" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="45" width="100" height="50" rx="8" fill="#1A2530" stroke="#FF990040"/>
+        <text x="60" y="68" fill="#FF9900" font-size="9" font-family="monospace" text-anchor="middle">USER</text>
+        <text x="60" y="83" fill="#8899aa" font-size="8" text-anchor="middle">Browser/Client</text>
+        <polygon points="120,70 135,63 135,77" fill="#FF990080"/>
+        <rect x="140" y="45" width="120" height="50" rx="8" fill="#1A2530" stroke="#FF990040"/>
+        <text x="200" y="66" fill="#FF9900" font-size="9" font-family="monospace" text-anchor="middle">EDGE LOCATION</text>
+        <text x="200" y="80" fill="#8899aa" font-size="8" text-anchor="middle">Cache Hit?</text>
+        <text x="200" y="91" fill="#44aa66" font-size="8" text-anchor="middle">Yes → Serve</text>
+        <polygon points="275,70 290,63 290,77" fill="#FF990080"/>
+        <text x="295" y="73" fill="#8899aa" font-size="8" text-anchor="middle">No →</text>
+        <polygon points="330,70 345,63 345,77" fill="#FF990080"/>
+        <rect x="350" y="45" width="120" height="50" rx="8" fill="#1A2530" stroke="#FF990040"/>
+        <text x="410" y="66" fill="#FF9900" font-size="9" font-family="monospace" text-anchor="middle">ORIGIN SERVER</text>
+        <text x="410" y="80" fill="#8899aa" font-size="8" text-anchor="middle">S3 / EC2 / ALB</text>
+        <text x="410" y="91" fill="#8899aa" font-size="8" text-anchor="middle">Custom HTTP</text>
+        <polygon points="480,70 495,63 495,77" fill="#FF990080"/>
+        <rect x="500" y="45" width="120" height="50" rx="8" fill="#1A2530" stroke="#FF990040"/>
+        <text x="560" y="68" fill="#FF9900" font-size="9" font-family="monospace" text-anchor="middle">CLOUDFRONT</text>
+        <text x="560" y="83" fill="#8899aa" font-size="8" text-anchor="middle">Cache + Serve</text>
+      </svg>
+    </div>
+
+    <h3>Access Controls</h3>
+    <ul>
+      <li><strong>Signed URLs</strong> — restrict access to individual files</li>
+      <li><strong>Signed Cookies</strong> — access to multiple restricted files; don't change current URLs</li>
+      <li><strong>Geo Restriction</strong> — restrict by geographic location</li>
+      <li><strong>Origin Access Identity (OAI)</strong> — special CloudFront user to secure S3 content; prevents direct S3 URL access</li>
+    </ul>
+
+    <h3>Security</h3>
+    <ul>
+      <li>Field-level encryption with HTTPS</li>
+      <li>AWS Shield Standard — DDoS protection</li>
+      <li>Shield Standard + WAF + Route53 — for more complex attacks</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== TRANSIT GATEWAY ===================== -->
+<div class="topic-section" id="transitgateway">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🕸️</div>
+    <div class="topic-header-text">
+      <h2>AWS Transit Gateway</h2>
+      <span class="tag">Networking · Connectivity</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Transit Gateway?</h3>
+    <p>A network hub to interconnect multiple VPCs and attach all hybrid connectivity. Solves the complexity of maintaining multiple VPC peering connections. Very useful for large enterprises.</p>
+
+    <h3>Key Capabilities</h3>
+    <ul>
+      <li>More than one per region but cannot be peered within a single region</li>
+      <li>Connected with AWS Direct Connect gateway from a different AWS account</li>
+      <li>Supports multi-user gateway connections for redundancy</li>
+      <li><strong>Transit Gateway VPN Attachment</strong> — IPsec VPN between remote network and Transit Gateway</li>
+      <li><strong>Transit Gateway Network Manager</strong> — manage and monitor networking resources and remote branch connections</li>
+      <li>Supports Amazon VPCs with IPv6 CIDRs</li>
+    </ul>
+
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>Transit Gateway</h4>
+        <ul>
+          <li>Hourly charge per attachment + data transfer fees</li>
+          <li>Multicast traffic between VPC attachments</li>
+          <li>50 Gbps burst per AZ per VPC connection</li>
+          <li>Security groups don't work with TGW</li>
+        </ul>
+      </div>
+      <div class="compare-card">
+        <h4>VPC Peering</h4>
+        <ul>
+          <li>No data transfer charges</li>
+          <li>No multicast routing</li>
+          <li>No aggregate bandwidth</li>
+          <li>Security groups work with intra-Region peering</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DIRECT CONNECT ===================== -->
+<div class="topic-section" id="directconnect">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🔌</div>
+    <div class="topic-header-text">
+      <h2>AWS Direct Connect</h2>
+      <span class="tag">Networking · Dedicated</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Direct Connect?</h3>
+    <p>Establishes a <strong>dedicated network connection</strong> from on-premises to AWS VPCs in the same region. Bypasses Internet service providers, removing internet-sourced network traffic for business-critical data.</p>
+
+    <h3>Virtual Interfaces (VIFs)</h3>
+    <ul>
+      <li><strong>Private VIF</strong> — connect to an Amazon VPC using private IP addresses</li>
+      <li><strong>Public VIF</strong> — connect to AWS services in any AWS region using public IP addresses</li>
+    </ul>
+
+    <h3>VPC Connection Methods</h3>
+    <p>AWS Managed VPN, AWS Direct Connect, Direct Connect + VPN, AWS VPN CloudHub, Transit VPC, VPC Peering, AWS PrivateLink, VPC Endpoints</p>
+
+    <h3>Direct Connect Gateway</h3>
+    <p>Globally available service to connect multiple VPCs across regions or accounts. Integrates with <strong>Transit Gateway</strong> (hub for multiple VPCs to on-premises) or <strong>Virtual Private Gateway</strong> (VPC edge routing).</p>
+  </div>
+</div>
+
+<!-- ===================== ELB ===================== -->
+<div class="topic-section" id="elb">
+  <div class="topic-header">
+    <div class="topic-icon-lg">⚖️</div>
+    <div class="topic-header-text">
+      <h2>AWS Elastic Load Balancer</h2>
+      <span class="tag">Networking · Load Balancing</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is ELB?</h3>
+    <p>Distributes incoming traffic to multiple targets (Instances, Containers, Lambda Functions, IP Addresses). Spans single or multiple AZs. Provides high availability, scaling, and security.</p>
+
+    <h3>Types of Load Balancers</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Type</th><th>Best For</th><th>Protocol</th></tr>
+        <tr><td>Application Load Balancer (ALB)</td><td>Web apps, HTTP routing, path-based routing</td><td>HTTP, HTTPS</td></tr>
+        <tr><td>Network Load Balancer (NLB)</td><td>Ultra-high performance, static IP</td><td>TCP, UDP, TLS</td></tr>
+        <tr><td>Gateway Load Balancer (GLB)</td><td>Third-party appliances (security, analytics)</td><td>GENEVE</td></tr>
+        <tr><td>Classic Load Balancer (CLB)</td><td>Legacy EC2-Classic instances (deprecated)</td><td>HTTP, HTTPS, TCP</td></tr>
+      </table>
+    </div>
+
+    <h3>Key Concepts</h3>
+    <ul>
+      <li><strong>Listener</strong> — checks for connection requests using specified protocol and port</li>
+      <li><strong>Target Group</strong> — destination for ELB; types: Instance, IP, Lambda Functions</li>
+      <li><strong>Health Check</strong> — continuously checks target health; unhealthy targets receive no traffic</li>
+    </ul>
+
+    <h3>Use Cases</h3>
+    <ul>
+      <li>Web application distributed across multiple EC2 instances</li>
+      <li>Hybrid cloud — load balance across AWS and on-premises using same target group</li>
+      <li>AWS migration — ELB supports both traditional and cloud-native app load balancing</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== ROUTE 53 ===================== -->
+<div class="topic-section" id="route53">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🌐</div>
+    <div class="topic-header-text">
+      <h2>Amazon Route 53</h2>
+      <span class="tag">Networking · DNS</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Route 53?</h3>
+    <p>Route 53 is a managed <strong>DNS (Domain Name System)</strong> service — a collection of rules and records helping clients reach servers by domain name.</p>
+
+    <h3>Hosted Zones</h3>
+    <ul>
+      <li><strong>Public Hosted Zone</strong> — determines how traffic is routed on the internet</li>
+      <li><strong>Private Hosted Zone</strong> — determines how traffic is routed within a VPC</li>
+    </ul>
+
+    <h3>CNAME vs. Alias</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Feature</th><th>CNAME</th><th>Alias</th></tr>
+        <tr><td>Points to</td><td>Any hostname</td><td>AWS Resource</td></tr>
+        <tr><td>Root domain</td><td>No (non-root only)</td><td>Yes</td></tr>
+        <tr><td>Charges</td><td>Charged per query</td><td>Free queries</td></tr>
+        <tr><td>Target examples</td><td>Any DNS record</td><td>ELB, CloudFront, Beanstalk, S3, Route53 record</td></tr>
+      </table>
+    </div>
+
+    <h3>Routing Policies</h3>
+    <ul>
+      <li><strong>Simple</strong> — single resource; no health checks</li>
+      <li><strong>Weighted</strong> — weighted resources; supports health checks</li>
+      <li><strong>Failover</strong> — primary/secondary; routes to secondary if primary is down</li>
+      <li><strong>Geo-location</strong> — routes to closest geographic location</li>
+      <li><strong>Geo-proximity</strong> — routes based on resource location within geographic area</li>
+      <li><strong>Latency-based</strong> — routes to destination with lowest latency</li>
+      <li><strong>Multi-value answer</strong> — distributes across multiple IP addresses; up to 8 IPs to reduce downtime</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== VPC ===================== -->
+<div class="topic-section" id="vpc">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🏰</div>
+    <div class="topic-header-text">
+      <h2>AWS VPC — Virtual Private Cloud</h2>
+      <span class="tag">Networking · Isolation</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is VPC?</h3>
+    <p>Amazon VPC allows users to create a virtual dedicated network for resources. Provides complete control over the virtual networking environment.</p>
+
+    <h3>Security Groups vs. Network ACLs</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Feature</th><th>Security Groups</th><th>Network ACLs</th></tr>
+        <tr><td>Level</td><td>Instance level</td><td>Subnet level</td></tr>
+        <tr><td>Stateful?</td><td>Yes — return traffic auto-allowed</td><td>No — must define both inbound and outbound</td></tr>
+        <tr><td>Rules</td><td>Allow only</td><td>Allow and Deny</td></tr>
+        <tr><td>Default (Custom)</td><td>No inbound, all outbound allowed</td><td>Deny all inbound and outbound</td></tr>
+      </table>
+    </div>
+
+    <h3>VPC Components</h3>
+    <ul>
+      <li><strong>Subnets</strong> — Public (internet access via IGW) or Private (no direct internet)</li>
+      <li><strong>Route Tables</strong> — one subnet → one route table; one route table → multiple subnets</li>
+      <li><strong>NAT Instance</strong> — EC2 in public subnet; allows private subnet to reach internet (IPv4)</li>
+      <li><strong>NAT Gateway</strong> — AWS-managed; uses elastic IP; charged per hour + data processing; not for IPv6</li>
+      <li><strong>DHCP Options Set</strong> — auto-created with VPC; contains domain name, DNS server info</li>
+      <li><strong>PrivateLink</strong> — access services privately without internet using private IPs</li>
+      <li><strong>VPC Endpoints</strong> — Interface (ENI with private IP), Gateway Load Balancer, or Gateway (Route Table target)</li>
+      <li><strong>Egress-Only IGW</strong> — outbound-only for IPv6 traffic</li>
+      <li><strong>VPC Peering</strong> — connect two VPCs; same region, different region, or different account</li>
+    </ul>
+
+    <h3>VPN</h3>
+    <ul>
+      <li><strong>Site-to-Site VPN</strong> — encrypted tunnels between your network and AWS VPCs or Transit Gateways</li>
+      <li><strong>Client VPN</strong> — connects users to AWS or on-premises resources using a VPN client</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== EVENTBRIDGE ===================== -->
+<div class="topic-section" id="eventbridge">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🎯</div>
+    <div class="topic-header-text">
+      <h2>Amazon EventBridge</h2>
+      <span class="tag">Integration · Event Bus</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is EventBridge?</h3>
+    <p>A serverless event bus service for SaaS and AWS services. Integrates 90+ AWS source services with 17+ target services with real-time event routing. Formerly called <strong>Amazon CloudWatch Events</strong>.</p>
+
+    <h3>Key Concepts</h3>
+    <ul>
+      <li><strong>Event Buses</strong> — receive events; one default event bus per account (AWS services); create custom buses</li>
+      <li><strong>Events</strong> — JSON objects indicating environment changes; create rules to auto-act on changes</li>
+      <li><strong>Schema Registry</strong> — container for schemas; schemas available for all AWS services; auto-infer from events</li>
+      <li><strong>Rules</strong> — match incoming events and route to targets; one rule → multiple targets processed in parallel</li>
+      <li><strong>Targets</strong> — process events in JSON format; must be in same region as rule</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> No charge for rules or delivery. Pay only for events published, Schema Discovery ingestion, and Event Replay. Custom/third-party/cross-account events: $1.00 per million requests.</div>
+  </div>
+</div>
+
+<!-- ===================== SNS ===================== -->
+<div class="topic-section" id="sns">
+  <div class="topic-header">
+    <div class="topic-icon-lg">📢</div>
+    <div class="topic-header-text">
+      <h2>AWS SNS — Simple Notification Service</h2>
+      <span class="tag">Integration · Messaging</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is SNS?</h3>
+    <p>SNS is a web service for sending notifications from the cloud. Delivers notifications via mobile push, SMS, email, SQS, or HTTP. Allows grouping multiple recipients using <strong>topics</strong>.</p>
+
+    <h3>Topic Types</h3>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>Standard Topic</h4>
+        <ul>
+          <li>Messages may be out of order</li>
+          <li>Messages can be delivered more than once</li>
+          <li>For non-order-critical notifications</li>
+        </ul>
+      </div>
+      <div class="compare-card">
+        <h4>FIFO Topic</h4>
+        <ul>
+          <li>Strict message ordering maintained</li>
+          <li>No duplicate deliveries</li>
+          <li>For critical, order-sensitive events</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Features</h3>
+    <ul>
+      <li>Instantaneous, push-based delivery</li>
+      <li>Simple API; easy integration with AWS services</li>
+      <li>Flexible delivery over multiple protocols</li>
+      <li>Pay-as-you-go; fully managed with auto-scalability</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== SQS ===================== -->
+<div class="topic-section" id="sqs">
+  <div class="topic-header">
+    <div class="topic-icon-lg">📬</div>
+    <div class="topic-header-text">
+      <h2>AWS SQS — Simple Queue Service</h2>
+      <span class="tag">Integration · Queue</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is SQS?</h3>
+    <p>Serverless service to decouple components and applications. Scales to 1–10,000 messages per second. Default retention: <strong>4 days</strong> (max: 14 days). Messages auto-deleted after consumption. Fixed size: <strong>256 KB</strong>.</p>
+
+    <h3>Queue Types</h3>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>Standard Queue</h4>
+        <ul>
+          <li>Unlimited transactions per second</li>
+          <li>Messages delivered in any order</li>
+          <li>Messages may be delivered twice</li>
+        </ul>
+      </div>
+      <div class="compare-card">
+        <h4>FIFO Queue</h4>
+        <ul>
+          <li>300 messages/second (3,000 with batching)</li>
+          <li>Exactly-once processing</li>
+          <li>Messages in strict order</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Special Queue Features</h3>
+    <ul>
+      <li><strong>Delay Queue</strong> — postpone message delivery by 0–15 minutes</li>
+      <li><strong>Dead-Letter Queue (DLQ)</strong> — captures messages that could not be consumed successfully</li>
+      <li><strong>Visibility Timeout</strong> — prevents other consumers from receiving a message while it's being processed; default 30s, max 12 hours</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== STEP FUNCTIONS ===================== -->
+<div class="topic-section" id="stepfunctions">
+  <div class="topic-header">
+    <div class="topic-icon-lg">🔀</div>
+    <div class="topic-header-text">
+      <h2>AWS Step Functions</h2>
+      <span class="tag">Integration · Orchestration</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What are Step Functions?</h3>
+    <p>Step Functions offload application orchestration to a fully managed AWS service. Developers modularize code into "Steps" — AWS handles partial failures, retries, and error handling.</p>
+
+    <h3>Workflow Types</h3>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>Standard Workflow</h4>
+        <ul>
+          <li>Long-running, durable, auditable workflows</li>
+          <li>Exactly-once execution</li>
+          <li>Execution history up to 90 days</li>
+        </ul>
+      </div>
+      <div class="compare-card">
+        <h4>Express Workflow</h4>
+        <ul>
+          <li>High-volume, event-processing workloads</li>
+          <li>At-least-once execution</li>
+          <li>Duration up to 5 minutes</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Key Features</h3>
+    <ul>
+      <li>Fixed or dynamic sequence workflows</li>
+      <li>Inbuilt Retry and error handling</li>
+      <li>Native Lambda, SNS, ECS, Fargate, DynamoDB, SQS, SageMaker, EMR integrations</li>
+      <li>GUI for workflow audit, input/output visualization, and failure detection</li>
+      <li>25,000 execution history entry limit (use Lambda pattern for long-running executions)</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> Standard: $0.025 per 1,000 state transitions. Express: $1.00 per 1M requests + duration charges.</div>
+  </div>
+</div>
+
+<!-- ===================== COST EXPLORER ===================== -->
+<div class="topic-section" id="costexplorer">
+  <div class="topic-header">
+    <div class="topic-icon-lg">💰</div>
+    <div class="topic-header-text">
+      <h2>AWS Cost Explorer</h2>
+      <span class="tag">Cost Management</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is Cost Explorer?</h3>
+    <p>A UI tool to analyze costs and usage with graphs, cost reports, and RI reports. Accessed from the Billing and Cost Management console. Provides up to <strong>12 months of historical data</strong> and <strong>12-month forecasts</strong>.</p>
+
+    <h3>Default Reports</h3>
+    <ul>
+      <li><strong>Cost and Usage Reports</strong> — AWS Marketplace, daily costs, monthly by linked account, monthly by service, monthly EC2 running hours</li>
+      <li><strong>RI Utilization Reports</strong> — how much saved or overspent using Reserved Instances</li>
+      <li><strong>RI Coverage Reports</strong> — how many hours covered by Reserved Instances</li>
+    </ul>
+
+    <h3>Key Capabilities</h3>
+    <ul>
+      <li>Custom time period at monthly or daily interval</li>
+      <li><strong>Savings Plans</strong> — up to 72% savings on AWS compute usage</li>
+      <li>Programmatic access via Cost Explorer API</li>
+      <li>Export to CSV, bookmark, or save as report</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> Viewing cost/usage analysis is free. Cost Explorer API: $0.01 per API request.</div>
+  </div>
+</div>
+
+<!-- ===================== BUDGETS ===================== -->
+<div class="topic-section" id="budgets">
+  <div class="topic-header">
+    <div class="topic-icon-lg">📋</div>
+    <div class="topic-header-text">
+      <h2>AWS Budgets</h2>
+      <span class="tag">Cost Management</span>
+    </div>
+  </div>
+  <div class="topic-body">
+    <h3>What is AWS Budgets?</h3>
+    <p>Enables setting custom budgets to track cost and usage. Alerts via email or SNS when metrics reach thresholds. Filter budgets by Service, Linked Account, Tags, AZ, API Operation, and Purchase Option.</p>
+
+    <h3>Budget Types</h3>
+    <ul>
+      <li>Cost budgets</li>
+      <li>Usage budgets</li>
+      <li>RI utilization budgets</li>
+      <li>RI coverage budgets</li>
+      <li>Savings Plans utilization budgets</li>
+      <li>Savings Plans coverage budgets</li>
+    </ul>
+
+    <h3>Best Practices</h3>
+    <ul>
+      <li>Set up to <strong>5 alerts per budget</strong></li>
+      <li>Key alerts: when costs exceed budgeted amount, exceed 80% of budget, and when forecasted costs exceed budget</li>
+      <li>Create separate IAM users/roles per user when using Budgets API</li>
+      <li>Budget actions are not effective for Auto Scaling groups</li>
+    </ul>
+
+    <div class="tip-box"><strong>💰 Pricing:</strong> Monitoring and notifications are free. Action-enabled budgets: $0.10/day per budget after free quota ends.</div>
+  </div>
+</div>
+
+    </div><!-- end .content -->
+  </main>
+</div>
+
+<script>
+  // Highlight active sidebar link on scroll
+  const sections = document.querySelectorAll('.topic-section');
+  const sidebarLinks = document.querySelectorAll('aside a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        sidebarLinks.forEach(link => link.style.color = '');
+        const id = entry.target.id;
+        const active = document.querySelector(`aside a[href="#${id}"]`);
+        if (active) {
+          active.style.color = '#FF9900';
+          active.style.borderLeftColor = '#FF9900';
+        }
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(section => observer.observe(section));
+</script>
+
+</body>
+</html>
